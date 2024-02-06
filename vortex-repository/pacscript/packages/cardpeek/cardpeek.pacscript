@@ -1,10 +1,10 @@
 name=cardpeek
 pkgname=cardpeek
 pkgver=0.8.4
-pkgrel=2
+pkgrel=3
 pkgdesc="A tool to read-only the contents of smartcards"
 gives="${pkgname}"
-breaks=("${pkgname}" "${pkgname}-data")
+replace=("${pkgname}" "${pkgname}-data")
 arch=('amd64')
 url="http://downloads.pannetrat.com/install/${pkgname}-${pkgver}.tar.gz"
 license='GPL3'
