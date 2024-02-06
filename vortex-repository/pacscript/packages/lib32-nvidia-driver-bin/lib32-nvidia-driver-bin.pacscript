@@ -1,1 +1,104 @@
- 
+# Maintainer: Sven-Hendrik Haase <svenstaro@archlinux.org>
+# Contributor: Thomas Baechler <thomas@archlinux.org>
+# Contributor: James Rayner <iphitus@gmail.com>
+name="lib32-nvidia-driver-bin"
+
+pkgbase="lib32-nvidia-utils"
+pkgname=('lib32-nvidia-utils' 'lib32-opencl-nvidia')
+pkgver=545.29.06
+pkgrel=1
+_pkg="NVIDIA-Linux-x86_64-${pkgver}"
+arch=("amd64")
+url="https://us.download.nvidia.com/XFree86/Linux-x86_64/${pkgver}/${_pkg}.run"
+
+_pkgbasename="nvidia-utils"
+license=('custom')
+options=('!strip')
+
+
+#makedepends=('nvidia-libgl')  # To avoid conflict during installation in the build chroot
+#hash=('b80e1643471c48477479a48d2e8a9c4a241874d6207ddeaccdeedd3f9f1121d79be90be07d37df094fa6f7cc5806857bf2368337ba40cb5cfe6d04c117c5c45d')
+
+create_links() {
+    # create soname links
+    for _lib in $(find "${pkgdir}" -name '*.so*' | grep -v 'xorg/'); do
+        _soname=$(dirname "${_lib}")/$(readelf -d "${_lib}" | grep -Po 'SONAME.*: \[\K[^]]*' || true)
+        _base=$(echo ${_soname} | sed -r 's/(.*).so.*/\1.so/')
+        [[ -e "${_soname}" ]] || ln -s $(basename "${_lib}") "${_soname}"
+        [[ -e "${_base}" ]] || ln -s $(basename "${_soname}") "${_base}"
+    done
+}
+
+build() {
+    sh ${_pkg}.run --extract-only
+}
+
+package() {
+    pkgdesc="OpenCL implemention for NVIDIA (32-bit)"
+    depends=('lib32-zlib' 'lib32-gcc-libs')
+    optdepends=('opencl-headers: headers necessary for OpenCL development')
+    provides=('lib32-opencl-driver')
+
+    pkgdesc="NVIDIA drivers utilities (32-bit)"
+    depends=('lib32-zlib' 'lib32-gcc-libs' 'lib32-libglvnd' "nvidia-utils=${pkgver}")
+    optdepends=('lib32-opencl-nvidia')
+    conflicts=('lib32-nvidia-libgl')
+    provides=('lib32-vulkan-driver' 'lib32-opengl-driver' 'lib32-nvidia-libgl')
+    replaces=('lib32-nvidia-libgl')
+
+    cd "${_pkg}"/32
+
+    # OpenCL
+    sudo install -D -m755 "libnvidia-opencl.so.${pkgver}" "${pkgdir}/usr/lib32/libnvidia-opencl.so.${pkgver}"
+
+    sudo mkdir -p "${pkgdir}/usr/share/licenses"
+    sudo ln -s $_pkgbasename "${pkgdir}/usr/share/licenses/lib32-opencl-nvidia"
+
+    #cd "${_pkg}"/32
+
+    # Check http://us.download.nvidia.com/XFree86/Linux-x86_64/${pkgver}/README/installedcomponents.html
+    # for hints on what needs to be installed where.
+
+    sudo install -D -m755 "libGLX_nvidia.so.${pkgver}" "${pkgdir}/usr/lib32/libGLX_nvidia.so.${pkgver}"
+
+    # OpenGL libraries
+    sudo install -D -m755 "libEGL_nvidia.so.${pkgver}" "${pkgdir}/usr/lib32/libEGL_nvidia.so.${pkgver}"
+    sudo install -D -m755 "libGLESv1_CM_nvidia.so.${pkgver}" "${pkgdir}/usr/lib32/libGLESv1_CM_nvidia.so.${pkgver}"
+    sudo install -D -m755 "libGLESv2_nvidia.so.${pkgver}" "${pkgdir}/usr/lib32/libGLESv2_nvidia.so.${pkgver}"
+
+    # OpenGL core library
+    sudo install -D -m755 "libnvidia-glcore.so.${pkgver}" "${pkgdir}/usr/lib32/libnvidia-glcore.so.${pkgver}"
+    sudo install -D -m755 "libnvidia-eglcore.so.${pkgver}" "${pkgdir}/usr/lib32/libnvidia-eglcore.so.${pkgver}"
+    sudo install -D -m755 "libnvidia-glsi.so.${pkgver}" "${pkgdir}/usr/lib32/libnvidia-glsi.so.${pkgver}"
+
+    # misc
+    sudo install -D -m755 "libnvidia-fbc.so.${pkgver}" "${pkgdir}/usr/lib32/libnvidia-fbc.so.${pkgver}"
+    sudo install -D -m755 "libnvidia-encode.so.${pkgver}" "${pkgdir}/usr/lib32/libnvidia-encode.so.${pkgver}"
+    sudo install -D -m755 "libnvidia-ml.so.${pkgver}" "${pkgdir}/usr/lib32/libnvidia-ml.so.${pkgver}"
+    sudo install -D -m755 "libnvidia-glvkspirv.so.${pkgver}" "${pkgdir}/usr/lib32/libnvidia-glvkspirv.so.${pkgver}"
+    sudo install -D -m755 "libnvidia-allocator.so.${pkgver}" "${pkgdir}/usr/lib32/libnvidia-allocator.so.${pkgver}"
+    sudo install -D -m755 "libnvidia-gpucomp.so.${pkgver}" "${pkgdir}/usr/lib32/libnvidia-gpucomp.so.${pkgver}"
+
+    # VDPAU
+    sudo install -D -m755 "libvdpau_nvidia.so.${pkgver}" "${pkgdir}/usr/lib32/vdpau/libvdpau_nvidia.so.${pkgver}"
+
+    # nvidia-tls library
+    sudo install -D -m755 "libnvidia-tls.so.${pkgver}" "${pkgdir}/usr/lib32/libnvidia-tls.so.${pkgver}"
+
+    # CUDA
+    sudo install -D -m755 "libcuda.so.${pkgver}" "${pkgdir}/usr/lib32/libcuda.so.${pkgver}"
+    sudo install -D -m755 "libnvcuvid.so.${pkgver}" "${pkgdir}/usr/lib32/libnvcuvid.so.${pkgver}"
+
+    # PTX JIT Compiler (Parallel Thread Execution (PTX) is a pseudo-assembly language for CUDA)
+    sudo install -D -m755 "libnvidia-ptxjitcompiler.so.${pkgver}" "${pkgdir}/usr/lib32/libnvidia-ptxjitcompiler.so.${pkgver}"
+
+    # Optical flow
+    sudo install -D -m755 "libnvidia-opticalflow.so.${pkgver}" "${pkgdir}/usr/lib32/libnvidia-opticalflow.so.${pkgver}"
+
+    create_links
+
+    sudo rm -rf "${pkgdir}"/usr/{include,share,bin}
+    sudo mkdir -p "${pkgdir}/usr/share/licenses"
+    sudo ln -s $_pkgbasename "${pkgdir}/usr/share/licenses/${pkgname}"
+}
+
