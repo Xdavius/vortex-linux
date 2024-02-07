@@ -22,4 +22,3 @@ package() {
   cd ${pkgname}-${pkgver}
   sudo make DESTDIR="${pkgdir}" install
 }
-
