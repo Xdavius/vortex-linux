@@ -2,19 +2,21 @@
 # Maintainer: Felix Yan <felixonmars@archlinux.org>
 # Maintainer: Levente Polyak <anthraxx[at]archlinux[dot]org>
 name="nvidia-settings"
-gives=("nvidia-settings" "libxnvctrl")
-replace=("nvidia-settings" "libxnvctrl")
-pkgbase="nvidia-settings"
+gives="nvidia-settings"
+provides=("libxnvctrl0")
+replace=("libxnvctrl-dev" "libxnvctrl0")
 pkgname="nvidia-settings"
 pkgver="545.29.06"
 pkgrel="1"
 pkgdesc='Tool for configuring the NVIDIA graphics driver'
-url="${pkgbase}-${pkgver}.tar.gz::https://github.com/NVIDIA/nvidia-settings/archive/${pkgver}.tar.gz"
+url="https://github.com/NVIDIA/nvidia-settings/archive/refs/tags/${pkgver}.tar.gz"
 arch=("amd64")
 license=('GPL2')
-makedepends=('inetutils' 'jansson' 'gtk3' 'libxv' 'libvdpau' 'nvidia-utils' 'libxext')
-depends=('jansson' 'gtk3' 'libxv' 'libvdpau' 'nvidia-utils' 'libxnvctrl' 'libxext')
+makedepends=("inetutils-tools" "libjansson-dev" "libgtk-3-dev" "libxv-dev" "libvdpau-dev"  "libxext-dev" "libxxf86vm-dev" "m4")
+depends=("wget" "libjansson-dev" "libgtk-3-dev" "libxv-dev" "libvdpau-dev" "libxext-dev")
+#pacdeps=("nvidia-driver-bin")
 options=('staticlibs')
+maintainer="xdavius <xdavius@github.com>"
 
 #hash=()
 
@@ -23,23 +25,23 @@ prepare() {
   export NV_USE_BUNDLED_LIBJANSSON=0
   export OUTPUTDIR=out
 
-  cd ${pkgbase}-${pkgver}
+  #cd ${SRCDIR}
 
   #PATCH
-  wget https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-settings/-/blob/6762a119997dcec550242c24b24b7897e7490a9a/nvidia-settings-libxnvctrl_so.patch
-  patch -Np1 -i "${srcdir}"/nvidia-settings-libxnvctrl_so.patch
+  wget https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-settings/-/raw/6762a119997dcec550242c24b24b7897e7490a9a/nvidia-settings-libxnvctrl_so.patch
+  #cat nvidia-settings-libxnvctrl_so.patch
+  patch -Np1 -i "nvidia-settings-libxnvctrl_so.patch"
 }
 
 build() {
-  cd ${pkgbase}-${pkgver}
   export CFLAGS+=" -ffat-lto-objects"
-  make -j{ncpu}
+  make -j"${NCPU}"
 }
 
 package() {
 
-  cd ${pkgbase}-${pkgver}
-  DESTDIR="${pkgdir}" sudo make install
+  #cd ${pkgver}
+  sudo make DESTDIR="${pkgdir}" install
 
   sudo install -D -m644 doc/nvidia-settings.desktop "${pkgdir}/usr/share/applications/nvidia-settings.desktop"
   sudo install -D -m644 doc/nvidia-settings.png "${pkgdir}/usr/share/pixmaps/nvidia-settings.png"
@@ -50,13 +52,13 @@ package() {
     -e 's/Icon=.*/Icon=nvidia-settings/' \
     -i "${pkgdir}/usr/share/applications/nvidia-settings.desktop"
 
-  #cd ${pkgbase}-${pkgver}
+  #cd ${pkgname}-${pkgver}
   sudo install -Dm 644 doc/{NV-CONTROL-API.txt,FRAMELOCK.txt} -t "${pkgdir}/usr/share/doc/${pkgname}"
   sudo install -Dm 644 samples/{Makefile,README,*.c,*.h,*.mk} -t "${pkgdir}/usr/share/doc/${pkgname}/samples"
 
   sudo install -Dm 644 src/libXNVCtrl/*.h -t "${pkgdir}/usr/include/NVCtrl"
-  sudo install -d "${pkgdir}/usr/lib"
-  sudo cp -Pr src/out/libXNVCtrl.* -t "${pkgdir}/usr/lib"
+  sudo install -d "${pkgdir}/usr/lib/"
+  sudo cp -Pr src/_out/Linux_x86_64/libXNVCtrl.* -t "${pkgdir}/usr/lib/"
 }
 
 # vim: ts=2 sw=2 et:

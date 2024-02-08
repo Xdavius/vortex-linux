@@ -5,14 +5,15 @@ pkgver="545.29.06"
 pkgrel="4"
 pkgdesc="lib-nvidia-utils"
 gives="${name}"
-maintainer="xdavius"
 arch=('amd64')
 license=('custom')
 options=('!strip')
 makedepends=('patchelf')
-depends=("dkms" "linux-headers-amd64" "wget")
+depends=("wget" "dkms" "linux-headers-amd64" "libglvnd-dev" "libnvidia-egl-wayland-dev" "zlib1g-dev" "build-essential:i386" "zlib1g-dev:i386" "libglvnd-dev:i386")
+breaks=("nvidia-driver" "nvidia-driver-libs:i386" "nvidia-cuda-dev" "nvidia-cuda-toolkit")
 _pkg="NVIDIA-Linux-x86_64-${pkgver}"
 url="https://us.download.nvidia.com/XFree86/Linux-x86_64/${pkgver}/${_pkg}.run"
+maintainer="xdavius <xdavius@github.com>"
 
 create_links() {
     # create soname links
@@ -64,41 +65,44 @@ DEST_MODULE_LOCATION[4]="/kernel/drivers/video"' dkms.conf
 package() {
     cd "${_pkg}"
 
-    # Check http://us.download.nvidia.com/XFree86/Linux-x86_64/${pkgver}/README/installedcomponents.html
-    # for hints on what needs to be installed where.
+# Check http://us.download.nvidia.com/XFree86/Linux-x86_64/${pkgver}/README/installedcomponents.html
+# for hints on what needs to be installed where.
 
-    # X driver
+# X driver
     sudo install -Dm755 nvidia_drv.so "${pkgdir}/usr/lib/xorg/modules/drivers/nvidia_drv.so"
 
-    # Wayland/GBM
+# Wayland/GBM
     sudo install -Dm755 libnvidia-egl-gbm.so.1* -t "${pkgdir}/usr/lib/x86_64-linux-gnu/"
     sudo install -Dm644 15_nvidia_gbm.json "${pkgdir}/usr/share/egl/egl_external_platform.d/15_nvidia_gbm.json"
     sudo mkdir -p "${pkgdir}/usr/lib/x86_64-linux-gnu/gbm"
     sudo ln -sr "${pkgdir}/usr/lib/x86_64-linux-gnu/libnvidia-allocator.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/gbm/nvidia-drm_gbm.so"
 
-    # firmware
+# firmware
     sudo install -Dm644 -t "${pkgdir}/usr/lib/firmware/nvidia/${pkgver}/" firmware/*.bin
 
-    # GLX extension module for X
+# Libnvidia-gtk
+    sudo install -Dm755 "libnvidia-gtk2.so.${pkgver} ${pkgdir}/usr/lib/x86_64-linux-gnu/libnvidia-gtk2.so.${pkgver}"
+    sudo install -Dm755 "libnvidia-gtk3.so.${pkgver} ${pkgdir}/usr/lib/x86_64-linux-gnu/libnvidia-gtk3.so.${pkgver}"
+# GLX extension module for X
     sudo install -Dm755 "libglxserver_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/nvidia/xorg/libglxserver_nvidia.so.${pkgver}"
-    # Ensure that X finds glx
+# Ensure that X finds glx
     sudo ln -s "libglxserver_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/nvidia/xorg/libglxserver_nvidia.so.1"
     sudo ln -s "libglxserver_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/nvidia/xorg/libglxserver_nvidia.so"
 
     sudo install -Dm755 "libGLX_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.${pkgver}"
 
-    # OpenGL libraries
+# OpenGL libraries
     sudo install -Dm755 "libEGL_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/libEGL_nvidia.so.${pkgver}"
     sudo install -Dm755 "libGLESv1_CM_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/libGLESv1_CM_nvidia.so.${pkgver}"
     sudo install -Dm755 "libGLESv2_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/libGLESv2_nvidia.so.${pkgver}"
     sudo install -Dm644 "10_nvidia.json" "${pkgdir}/usr/share/glvnd/egl_vendor.d/10_nvidia.json"
 
-    # OpenGL core library
+# OpenGL core library
     sudo install -Dm755 "libnvidia-glcore.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.${pkgver}"
     sudo install -Dm755 "libnvidia-eglcore.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/libnvidia-eglcore.so.${pkgver}"
     sudo install -Dm755 "libnvidia-glsi.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/libnvidia-glsi.so.${pkgver}"
 
-    # misc
+# misc
     sudo install -Dm755 "libnvidia-api.so.1" "${pkgdir}/usr/lib/x86_64-linux-gnu/libnvidia-api.so.1"
     sudo install -Dm755 "libnvidia-fbc.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/libnvidia-fbc.so.${pkgver}"
     sudo install -Dm755 "libnvidia-encode.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/libnvidia-encode.so.${pkgver}"
@@ -108,78 +112,78 @@ package() {
     sudo install -Dm755 "libnvidia-allocator.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/libnvidia-allocator.so.${pkgver}"
     sudo install -Dm755 "libnvidia-gpucomp.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/libnvidia-gpucomp.so.${pkgver}"
 
-    # Vulkan ICD
+# Vulkan ICD
     sudo install -Dm644 "nvidia_icd.json" "${pkgdir}/usr/share/vulkan/icd.d/nvidia_icd.json"
     sudo install -Dm644 "nvidia_layers.json" "${pkgdir}/usr/share/vulkan/implicit_layer.d/nvidia_layers.json"
 
-    # VDPAU
+# VDPAU
     sudo install -Dm755 "libvdpau_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/vdpau/libvdpau_nvidia.so.${pkgver}"
 
-    # nvidia-tls library
+# nvidia-tls library
     sudo install -Dm755 "libnvidia-tls.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/libnvidia-tls.so.${pkgver}"
 
-    # CUDA
+# CUDA
     sudo install -Dm755 "libcuda.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/libcuda.so.${pkgver}"
     sudo install -Dm755 "libnvcuvid.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/libnvcuvid.so.${pkgver}"
     sudo install -Dm755 "libcudadebugger.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/libcudadebugger.so.${pkgver}"
 
-    # NVVM Compiler library loaded by the CUDA driver to do JIT link-time-optimization
+# NVVM Compiler library loaded by the CUDA driver to do JIT link-time-optimization
     sudo install -Dm644 "libnvidia-nvvm.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/libnvidia-nvvm.so.${pkgver}"
 
-    # PTX JIT Compiler (Parallel Thread Execution (PTX) is a pseudo-assembly language for CUDA)
+# PTX JIT Compiler (Parallel Thread Execution (PTX) is a pseudo-assembly language for CUDA)
     sudo install -Dm755 "libnvidia-ptxjitcompiler.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/libnvidia-ptxjitcompiler.so.${pkgver}"
 
-    # raytracing
+# raytracing
     sudo install -Dm755 "nvoptix.bin" "${pkgdir}/usr/share/nvidia/nvoptix.bin"
     sudo install -Dm755 "libnvoptix.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/libnvoptix.so.${pkgver}"
     sudo install -Dm755 "libnvidia-rtcore.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/libnvidia-rtcore.so.${pkgver}"
 
-    # NGX
+# NGX
     sudo install -Dm755 nvidia-ngx-updater "${pkgdir}/usr/bin/nvidia-ngx-updater"
     sudo install -Dm755 "libnvidia-ngx.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/libnvidia-ngx.so.${pkgver}"
     sudo install -Dm755 _nvngx.dll "${pkgdir}/usr/lib/x86_64-linux-gnu/nvidia/wine/_nvngx.dll"
     sudo install -Dm755 nvngx.dll "${pkgdir}/usr/lib/x86_64-linux-gnu/nvidia/wine/nvngx.dll"
 
-    # Optical flow
+# Optical flow
     sudo install -Dm755 "libnvidia-opticalflow.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/libnvidia-opticalflow.so.${pkgver}"
 
-    # Cryptography library wrapper
+# Cryptography library wrapper
     ls libnvidia-pkcs*
     ls *openssl*
     sudo install -Dm755 "libnvidia-pkcs11.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/libnvidia-pkcs11.so.${pkgver}"
     sudo install -Dm755 "libnvidia-pkcs11-openssl3.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/libnvidia-pkcs11-openssl3.so.${pkgver}"
 
-    # Debug
+# Debug
     sudo install -Dm755 nvidia-debugdump "${pkgdir}/usr/bin/nvidia-debugdump"
 
-    # nvidia-xconfig
+# nvidia-xconfig
     sudo install -Dm755 nvidia-xconfig "${pkgdir}/usr/bin/nvidia-xconfig"
     sudo install -Dm644 nvidia-xconfig.1.gz "${pkgdir}/usr/share/man/man1/nvidia-xconfig.1.gz"
 
-    # nvidia-bug-report
+# nvidia-bug-report
     sudo install -Dm755 nvidia-bug-report.sh "${pkgdir}/usr/bin/nvidia-bug-report.sh"
 
-    # nvidia-smi
+# nvidia-smi
     sudo install -Dm755 nvidia-smi "${pkgdir}/usr/bin/nvidia-smi"
     sudo install -Dm644 nvidia-smi.1.gz "${pkgdir}/usr/share/man/man1/nvidia-smi.1.gz"
 
-    # nvidia-cuda-mps
+# nvidia-cuda-mps
     sudo install -Dm755 nvidia-cuda-mps-server "${pkgdir}/usr/bin/nvidia-cuda-mps-server"
     sudo install -Dm755 nvidia-cuda-mps-control "${pkgdir}/usr/bin/nvidia-cuda-mps-control"
     sudo install -Dm644 nvidia-cuda-mps-control.1.gz "${pkgdir}/usr/share/man/man1/nvidia-cuda-mps-control.1.gz"
 
-    # nvidia-modprobe
-    # This should be removed if nvidia fixed their uvm module!
+# nvidia-modprobe
+# This should be removed if nvidia fixed their uvm module!
     sudo install -Dm4755 nvidia-modprobe "${pkgdir}/usr/bin/nvidia-modprobe"
     sudo install -Dm644 nvidia-modprobe.1.gz "${pkgdir}/usr/share/man/man1/nvidia-modprobe.1.gz"
 
-    # nvidia-persistenced
+# nvidia-persistenced
     sudo install -Dm755 nvidia-persistenced "${pkgdir}/usr/bin/nvidia-persistenced"
     sudo install -Dm644 nvidia-persistenced.1.gz "${pkgdir}/usr/share/man/man1/nvidia-persistenced.1.gz"
     sudo install -Dm644 nvidia-persistenced-init/systemd/nvidia-persistenced.service.template "${pkgdir}/usr/lib/systemd/system/nvidia-persistenced.service"
     sudo sed -i 's/__USER__/nvidia-persistenced/' "${pkgdir}/usr/lib/systemd/system/nvidia-persistenced.service"
 
-    # application profiles
+# application profiles
     sudo install -Dm644 nvidia-application-profiles-${pkgver}-rc "${pkgdir}/usr/share/nvidia/nvidia-application-profiles-${pkgver}-rc"
     sudo install -Dm644 nvidia-application-profiles-${pkgver}-key-documentation "${pkgdir}/usr/share/nvidia/nvidia-application-profiles-${pkgver}-key-documentation"
 
@@ -189,14 +193,14 @@ package() {
     sudo cp -r html "${pkgdir}/usr/share/doc/nvidia/"
     sudo ln -s nvidia "${pkgdir}/usr/share/doc/nvidia-utils"
 
-    # new power management support
+# new power management support
     sudo install -Dm644 systemd/system/*.service -t "${pkgdir}/usr/lib/systemd/system"
     sudo install -Dm755 systemd/system-sleep/nvidia "${pkgdir}/usr/lib/systemd/system-sleep/nvidia"
     sudo install -Dm755 systemd/nvidia-sleep.sh "${pkgdir}/usr/bin/nvidia-sleep.sh"
     sudo install -Dm755 nvidia-powerd "${pkgdir}/usr/bin/nvidia-powerd"
     sudo install -Dm644 nvidia-dbus.conf "${pkgdir}"/usr/share/dbus-1/system.d/nvidia-dbus.conf
 
-    # distro specific files must be installed in /usr/share/X11/xorg.conf.d
+# distro specific files must be installed in /usr/share/X11/xorg.conf.d
     sudo install -Dm644 "${srcdir}/nvidia-drm-outputclass.conf" "${pkgdir}/usr/share/X11/xorg.conf.d/10-nvidia-drm-outputclass.conf"
 
     sudo install -Dm644 "${srcdir}/nvidia-utils.sysusers" "${pkgdir}/usr/lib/sysusers.d/$pkgname.conf"
@@ -206,21 +210,72 @@ package() {
     echo "blacklist nouveau" | sudo install -Dm644 /dev/stdin "${pkgdir}/usr/lib/modprobe.d/${pkgname}.conf"
     echo "nvidia-uvm" | sudo install -Dm644 /dev/stdin "${pkgdir}/usr/lib/modules-load.d/${pkgname}.conf"
 
-    # OpenCL
+# OpenCL
     sudo install -Dm644 nvidia.icd "${pkgdir}/etc/OpenCL/vendors/nvidia.icd"
     sudo install -Dm755 "libnvidia-opencl.so.${pkgver}" "${pkgdir}/usr/lib/libnvidia-opencl.so.${pkgver}"
 
     sudo mkdir -p "${pkgdir}/usr/share/licenses"
     sudo ln -s nvidia-utils "${pkgdir}/usr/share/licenses/opencl-nvidia"
 
-    #DKMS
-    #cd ${_pkg}
-
+# DKMS
     sudo install -dm 755 "${pkgdir}"/usr/src
     sudo cp -dr --no-preserve='ownership' kernel "${pkgdir}/usr/src/nvidia-${pkgver}"
 
     sudo install -Dt "${pkgdir}/usr/share/licenses/${pkgname}" -m644 "${srcdir}/${_pkg}/LICENSE"
 
+# LIB32 : /usr/lib/i386-linux-gnu/
+    cd "${_pkg}"/32
+
+    # OpenCL
+    sudo install -D -m755 "libnvidia-opencl.so.${pkgver}" "${pkgdir}/usr/lib/i386-linux-gnu/libnvidia-opencl.so.${pkgver}"
+
+    sudo mkdir -p "${pkgdir}/usr/share/licenses"
+    sudo ln -s $_pkgbasename "${pkgdir}/usr/share/licenses/lib32-opencl-nvidia"
+
+    # Check http://us.download.nvidia.com/XFree86/Linux-x86_64/${pkgver}/README/installedcomponents.html
+    # for hints on what needs to be installed where.
+
+    sudo install -D -m755 "libGLX_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/i386-linux-gnu/libGLX_nvidia.so.${pkgver}"
+
+    # OpenGL libraries
+    sudo install -D -m755 "libEGL_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/i386-linux-gnu/libEGL_nvidia.so.${pkgver}"
+    sudo install -D -m755 "libGLESv1_CM_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/i386-linux-gnu/libGLESv1_CM_nvidia.so.${pkgver}"
+    sudo install -D -m755 "libGLESv2_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/i386-linux-gnu/libGLESv2_nvidia.so.${pkgver}"
+
+    # OpenGL core library
+    sudo install -D -m755 "libnvidia-glcore.so.${pkgver}" "${pkgdir}/usr/lib/i386-linux-gnu/libnvidia-glcore.so.${pkgver}"
+    sudo install -D -m755 "libnvidia-eglcore.so.${pkgver}" "${pkgdir}/usr/lib/i386-linux-gnu/libnvidia-eglcore.so.${pkgver}"
+    sudo install -D -m755 "libnvidia-glsi.so.${pkgver}" "${pkgdir}/usr/lib/i386-linux-gnu/libnvidia-glsi.so.${pkgver}"
+
+    # misc
+    sudo install -D -m755 "libnvidia-fbc.so.${pkgver}" "${pkgdir}/usr/lib/i386-linux-gnu/libnvidia-fbc.so.${pkgver}"
+    sudo install -D -m755 "libnvidia-encode.so.${pkgver}" "${pkgdir}/usr/lib/i386-linux-gnu/libnvidia-encode.so.${pkgver}"
+    sudo install -D -m755 "libnvidia-ml.so.${pkgver}" "${pkgdir}/usr/lib/i386-linux-gnu/libnvidia-ml.so.${pkgver}"
+    sudo install -D -m755 "libnvidia-glvkspirv.so.${pkgver}" "${pkgdir}/usr/lib/i386-linux-gnu/libnvidia-glvkspirv.so.${pkgver}"
+    sudo install -D -m755 "libnvidia-allocator.so.${pkgver}" "${pkgdir}/usr/lib/i386-linux-gnu/libnvidia-allocator.so.${pkgver}"
+    sudo install -D -m755 "libnvidia-gpucomp.so.${pkgver}" "${pkgdir}/usr/lib/i386-linux-gnu/libnvidia-gpucomp.so.${pkgver}"
+
+    # VDPAU
+    install -D -m755 "libvdpau_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/i386-linux-gnu/vdpau/libvdpau_nvidia.so.${pkgver}"
+
+    # nvidia-tls library
+    sudo install -D -m755 "libnvidia-tls.so.${pkgver}" "${pkgdir}/usr/lib/i386-linux-gnu/libnvidia-tls.so.${pkgver}"
+
+    # CUDA
+    sudo install -D -m755 "libcuda.so.${pkgver}" "${pkgdir}/usr/lib/i386-linux-gnu/libcuda.so.${pkgver}"
+    sudo install -D -m755 "libnvcuvid.so.${pkgver}" "${pkgdir}/usr/lib/i386-linux-gnu/libnvcuvid.so.${pkgver}"
+
+    # PTX JIT Compiler (Parallel Thread Execution (PTX) is a pseudo-assembly language for CUDA)
+    sudo install -D -m755 "libnvidia-ptxjitcompiler.so.${pkgver}" "${pkgdir}/usr/lib/i386-linux-gnu/libnvidia-ptxjitcompiler.so.${pkgver}"
+
+    # Optical flow
+    sudo install -D -m755 "libnvidia-opticalflow.so.${pkgver}" "${pkgdir}/usr/lib/i386-linux-gnu/libnvidia-opticalflow.so.${pkgver}"
+
+    sudo rm -rf "${pkgdir}"/usr/{include,share,bin}
+    sudo mkdir -p "${pkgdir}/usr/share/licenses"
+    sudo ln -s $_pkgbasename "${pkgdir}/usr/share/licenses/${pkgname}"
+
+# CREATE .SO SYMLINKS
     create_links
 
 }
