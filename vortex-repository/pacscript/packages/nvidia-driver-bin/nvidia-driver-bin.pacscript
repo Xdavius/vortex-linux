@@ -4,16 +4,17 @@ pkgname=('lib-nvidia-utils')
 pkgver="545.29.06"
 pkgrel="3"
 pkgdesc="lib-nvidia-utils"
+gives="${name}"
 maintainer="xdavius"
 arch=('amd64')
 license=('custom')
 options=('!strip')
 makedepends=('patchelf')
+depends=("dkms" "linux-headers-amd64")
 _pkg="NVIDIA-Linux-x86_64-${pkgver}"
 url="https://us.download.nvidia.com/XFree86/Linux-x86_64/${pkgver}/${_pkg}.run"
+
 #patch="nvidia-drm-outputclass.conf" "nvidia-utils.sysusers" "nvidia.rules")
-
-
 
 create_links() {
     # create soname links
@@ -26,8 +27,11 @@ create_links() {
 }
 
 prepare() {
+    # PATCHES
     wget https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-utils/-/blob/2f6779c64c1f22ee64a53461bb975a6f7767ad54/nvidia-drivers-470.223.02-gpl-pfn_valid.patch
     wget https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-utils/-/blob/2f6779c64c1f22ee64a53461bb975a6f7767ad54/nvidia.rules
+
+    # PREPARE
     sh "${_pkg}.run" --extract-only
     cd "${_pkg}"
     tar -xf nvidia-persistenced-init.tar.bz2
@@ -233,7 +237,7 @@ set -e
 
 DKMS_NAME=nvidia
 DKMS_PACKAGE_NAME=$DKMS_NAME-dkms
-DKMS_VERSION=${pkgver}
+DKMS_VERSION=545.29.06
 
 postinst_found=0
 
@@ -256,9 +260,13 @@ case "$1" in
 	;;
 esac
 
-set +e
-  
+dkms add -m $DKMS_NAME -v $DKMS_VERSION
+dkms build -m $DKMS_NAME -v $DKMS_VERSION && dkms install -m $DKMS_NAME -v $DKMS_VERSION || true
+
+#ls /var/lib/initramfs-tools | xargs -n1 /usr/lib/dkms/dkms_autoinstaller start
+
 post_upgrade
+
 }
 
 pre_remove() {
@@ -266,8 +274,7 @@ pre_remove() {
 set -e
 
 DKMS_NAME=nvidia
-DKMS_VERSION=${pkgver}
-
+DKMS_VERSION=545.29.06
 case "$1" in
     remove|upgrade|deconfigure)
       if [  "$(dkms status -m $DKMS_NAME -v $DKMS_VERSION)" ]; then
@@ -276,5 +283,6 @@ case "$1" in
     ;;
 esac
 
-set +e 
+dkms remove -m $DKMS_NAME -v $DKMS_VERSION --all || true
+
 }
