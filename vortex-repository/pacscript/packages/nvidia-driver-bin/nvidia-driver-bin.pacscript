@@ -9,7 +9,7 @@ arch=('amd64')
 license=('custom')
 options=('!strip')
 makedepends=('patchelf')
-depends=("wget" "dkms" "linux-headers-amd64" "libglvnd-dev" "libnvidia-egl-wayland-dev" "zlib1g-dev" "build-essential:i386" "zlib1g-dev:i386" "libglvnd-dev:i386")
+depends=("wget" "dkms" "linux-headers-amd64" "libglvnd-dev" "libnvidia-egl-wayland-dev" "zlib1g-dev" "libgcc-12-dev:i386" "zlib1g-dev:i386" "libglvnd-dev:i386")
 breaks=("nvidia-driver" "nvidia-driver-libs:i386" "nvidia-cuda-dev" "nvidia-cuda-toolkit")
 _pkg="NVIDIA-Linux-x86_64-${pkgver}"
 url="https://us.download.nvidia.com/XFree86/Linux-x86_64/${pkgver}/${_pkg}.run"
@@ -27,10 +27,10 @@ create_links() {
 
 prepare() {
     # PATCHES
-    wget https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-utils/-/blob/2f6779c64c1f22ee64a53461bb975a6f7767ad54/nvidia-drivers-470.223.02-gpl-pfn_valid.patch
-    wget https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-utils/-/blob/2f6779c64c1f22ee64a53461bb975a6f7767ad54/nvidia.rules
-    wget https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-utils/-/blob/2f6779c64c1f22ee64a53461bb975a6f7767ad54/nvidia-drm-outputclass.conf
-    wget https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-utils/-/blob/2f6779c64c1f22ee64a53461bb975a6f7767ad54/nvidia-utils.sysusers
+    wget https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-utils/-/raw/main/nvidia-drivers-470.223.02-gpl-pfn_valid.patch
+    wget https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-utils/-/raw/main/nvidia.rules
+    wget https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-utils/-/raw/main/nvidia-drm-outputclass.conf
+    wget https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-utils/-/raw/main/nvidia-utils.sysusers
 
     # PREPARE
     sh "${_pkg}.run" --extract-only
@@ -83,6 +83,7 @@ package() {
 # Libnvidia-gtk
     sudo install -Dm755 "libnvidia-gtk2.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/libnvidia-gtk2.so.${pkgver}"
     sudo install -Dm755 "libnvidia-gtk3.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/libnvidia-gtk3.so.${pkgver}"
+
 # GLX extension module for X
     sudo install -Dm755 "libglxserver_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/nvidia/xorg/libglxserver_nvidia.so.${pkgver}"
 # Ensure that X finds glx
@@ -217,6 +218,8 @@ package() {
     sudo mkdir -p "${pkgdir}/usr/share/licenses"
     sudo ln -s nvidia-utils "${pkgdir}/usr/share/licenses/opencl-nvidia"
 
+    create_links
+
 # DKMS
     sudo install -dm 755 "${pkgdir}"/usr/src
     sudo cp -dr --no-preserve='ownership' kernel "${pkgdir}/usr/src/nvidia-${pkgver}"
@@ -224,7 +227,7 @@ package() {
     sudo install -Dt "${pkgdir}/usr/share/licenses/${pkgname}" -m644 "${srcdir}/${_pkg}/LICENSE"
 
 # LIB32 : /usr/lib/i386-linux-gnu/
-    cd "${_pkg}"/32
+    cd 32
 
     # OpenCL
     sudo install -D -m755 "libnvidia-opencl.so.${pkgver}" "${pkgdir}/usr/lib/i386-linux-gnu/libnvidia-opencl.so.${pkgver}"
@@ -256,7 +259,7 @@ package() {
     sudo install -D -m755 "libnvidia-gpucomp.so.${pkgver}" "${pkgdir}/usr/lib/i386-linux-gnu/libnvidia-gpucomp.so.${pkgver}"
 
     # VDPAU
-    install -D -m755 "libvdpau_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/i386-linux-gnu/vdpau/libvdpau_nvidia.so.${pkgver}"
+    sudo install -D -m755 "libvdpau_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/i386-linux-gnu/vdpau/libvdpau_nvidia.so.${pkgver}"
 
     # nvidia-tls library
     sudo install -D -m755 "libnvidia-tls.so.${pkgver}" "${pkgdir}/usr/lib/i386-linux-gnu/libnvidia-tls.so.${pkgver}"

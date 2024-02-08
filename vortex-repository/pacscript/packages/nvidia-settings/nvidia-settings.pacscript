@@ -14,7 +14,7 @@ arch=("amd64")
 license=('GPL2')
 makedepends=("inetutils-tools" "libjansson-dev" "libgtk-3-dev" "libxv-dev" "libvdpau-dev"  "libxext-dev" "libxxf86vm-dev" "m4")
 depends=("wget" "libjansson-dev" "libgtk-3-dev" "libxv-dev" "libvdpau-dev" "libxext-dev")
-#pacdeps=("nvidia-driver-bin")
+pacdeps=("nvidia-driver-bin")
 options=('staticlibs')
 maintainer="xdavius <xdavius@github.com>"
 
