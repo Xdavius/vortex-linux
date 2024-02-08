@@ -2,7 +2,7 @@ name="nvidia-driver-bin"
 pkgbase="nvidia-utils"
 pkgname=('lib-nvidia-utils')
 pkgver="545.29.06"
-pkgrel="3"
+pkgrel="4"
 pkgdesc="lib-nvidia-utils"
 gives="${name}"
 maintainer="xdavius"
@@ -10,11 +10,9 @@ arch=('amd64')
 license=('custom')
 options=('!strip')
 makedepends=('patchelf')
-depends=("dkms" "linux-headers-amd64")
+depends=("dkms" "linux-headers-amd64" "wget")
 _pkg="NVIDIA-Linux-x86_64-${pkgver}"
 url="https://us.download.nvidia.com/XFree86/Linux-x86_64/${pkgver}/${_pkg}.run"
-
-#patch="nvidia-drm-outputclass.conf" "nvidia-utils.sysusers" "nvidia.rules")
 
 create_links() {
     # create soname links
@@ -30,6 +28,8 @@ prepare() {
     # PATCHES
     wget https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-utils/-/blob/2f6779c64c1f22ee64a53461bb975a6f7767ad54/nvidia-drivers-470.223.02-gpl-pfn_valid.patch
     wget https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-utils/-/blob/2f6779c64c1f22ee64a53461bb975a6f7767ad54/nvidia.rules
+    wget https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-utils/-/blob/2f6779c64c1f22ee64a53461bb975a6f7767ad54/nvidia-drm-outputclass.conf
+    wget https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-utils/-/blob/2f6779c64c1f22ee64a53461bb975a6f7767ad54/nvidia-utils.sysusers
 
     # PREPARE
     sh "${_pkg}.run" --extract-only
