@@ -65,6 +65,22 @@ DEST_MODULE_LOCATION[4]="/kernel/drivers/video"' dkms.conf
 package() {
     cd "${_pkg}"
 
+
+# Create some paths
+sudo mkdir -p ${pkgdir}/usr/lib/xorg/modules/drivers
+
+sudo mkdir -p ${pkgdir}/usr/lib/x86_64-linux-gnu
+
+sudo mkdir -p ${pkgdir}/usr/bin
+
+sudo mkdir -p ${pkgdir}/usr/lib/Nvidia/xorg
+
+sudo mkdir -p ${pkgver}usr/share/vulkan/implicit_layer.d
+
+sudo mkdir -p ${pkgdir}/usr/share/man/man1/
+
+sudo mkdir -p ${pkgver}/usr/lib/systemd/system
+
 # Check http://us.download.nvidia.com/XFree86/Linux-x86_64/${pkgver}/README/installedcomponents.html
 # for hints on what needs to be installed where.
 
