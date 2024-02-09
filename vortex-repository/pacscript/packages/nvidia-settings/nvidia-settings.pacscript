@@ -6,8 +6,9 @@ gives="nvidia-settings"
 provides=("libxnvctrl0")
 replace=("libxnvctrl-dev" "libxnvctrl0")
 pkgname="nvidia-settings"
-pkgver="545.29.06"
+pkgver="535.154.05"
 pkgrel="1"
+epoch="2"
 pkgdesc='Tool for configuring the NVIDIA graphics driver'
 url="https://github.com/NVIDIA/nvidia-settings/archive/refs/tags/${pkgver}.tar.gz"
 arch=("amd64")
@@ -21,19 +22,19 @@ maintainer="xdavius <xdavius@github.com>"
 #hash=()
 
 prepare() {
-  export PREFIX=/usr
-  export NV_USE_BUNDLED_LIBJANSSON=0
-  export OUTPUTDIR=out
-
   #cd ${SRCDIR}
 
   #PATCH
   wget https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-settings/-/raw/6762a119997dcec550242c24b24b7897e7490a9a/nvidia-settings-libxnvctrl_so.patch
-  #cat nvidia-settings-libxnvctrl_so.patch
+
   patch -Np1 -i "nvidia-settings-libxnvctrl_so.patch"
 }
 
 build() {
+  
+  export PREFIX=/usr
+  export NV_USE_BUNDLED_LIBJANSSON=0
+  export OUTPUTDIR=out
   export CFLAGS+=" -ffat-lto-objects"
   make -j"${NCPU}"
 }
@@ -58,7 +59,7 @@ package() {
 
   sudo install -Dm 644 src/libXNVCtrl/*.h -t "${pkgdir}/usr/include/NVCtrl"
   sudo install -d "${pkgdir}/usr/lib/"
-  sudo cp -Pr src/_out/Linux_x86_64/libXNVCtrl.* -t "${pkgdir}/usr/lib/"
+  sudo cp -Pr src/out/libXNVCtrl.* -t "${pkgdir}/usr/lib/"
 }
 
 # vim: ts=2 sw=2 et:
