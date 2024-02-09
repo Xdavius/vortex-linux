@@ -22,26 +22,26 @@ maintainer="xdavius <xdavius@github.com>"
 #hash=()
 
 prepare() {
-  #cd ${SRCDIR}
 
-  #PATCH
+# PATCH
   wget https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-settings/-/raw/6762a119997dcec550242c24b24b7897e7490a9a/nvidia-settings-libxnvctrl_so.patch
 
   patch -Np1 -i "nvidia-settings-libxnvctrl_so.patch"
 }
 
 build() {
-  
+
   export PREFIX=/usr
   export NV_USE_BUNDLED_LIBJANSSON=0
   export OUTPUTDIR=out
   export CFLAGS+=" -ffat-lto-objects"
+  
   make -j"${NCPU}"
 }
 
 package() {
 
-  #cd ${pkgver}
+  export PREFIX=/usr
   sudo make DESTDIR="${pkgdir}" install
 
   sudo install -D -m644 doc/nvidia-settings.desktop "${pkgdir}/usr/share/applications/nvidia-settings.desktop"
@@ -51,10 +51,8 @@ package() {
     -e 's:__PIXMAP_PATH__:/usr/share/pixmaps:' \
     -e 's/__NVIDIA_SETTINGS_DESKTOP_CATEGORIES__/Settings;HardwareSettings;/' \
     -e 's/Icon=.*/Icon=nvidia-settings/' \
-    -e 's/Exec=.*/Exec=\/usr\/local\/bin\/nvidia-settings' \
     -i "${pkgdir}/usr/share/applications/nvidia-settings.desktop"
 
-  #cd ${pkgname}-${pkgver}
   sudo install -Dm 644 doc/{NV-CONTROL-API.txt,FRAMELOCK.txt} -t "${pkgdir}/usr/share/doc/${pkgname}"
   sudo install -Dm 644 samples/{Makefile,README,*.c,*.h,*.mk} -t "${pkgdir}/usr/share/doc/${pkgname}/samples"
 
@@ -62,9 +60,6 @@ package() {
   sudo install -d "${pkgdir}/usr/lib/"
   sudo cp -Pr src/out/libXNVCtrl.* -t "${pkgdir}/usr/lib/"
 
-  #link in /usr/bin
-  #sudo install -d "${pkgdir}/usr/bin/"
-  #sudo ln -s "${pkgdir}/usr/local/bin/nvidia-settings" "${pkgdir}/usr/bin/nvidia-settings"
 }
 
 # vim: ts=2 sw=2 et:
