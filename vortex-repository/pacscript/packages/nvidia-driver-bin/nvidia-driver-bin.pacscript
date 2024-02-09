@@ -9,9 +9,8 @@ arch=('amd64')
 license=('custom')
 options=('!strip')
 makedepends=("patchelf" "wget" "dkms" "linux-headers-amd64" "libglvnd-dev" "libnvidia-egl-wayland-dev" "zlib1g-dev" "libgcc-12-dev:i386" "zlib1g-dev:i386" "libglvnd-dev:i386")
-depends=("wget" "dkms" "linux-headers-amd64" "libglvnd-dev" "libnvidia-egl-wayland-dev" "zlib1g-dev" "libgcc-12-dev:i386" "zlib1g-dev:i386" "libglvnd-dev:i386")
+depends=("wget" "dkms" "linux-headers-amd64" "libglvnd-dev" "libnvidia-egl-wayland-dev" "zlib1g-dev" "zlib1g-dev:i386" "libglvnd-dev:i386")
 breaks=("nvidia-driver" "nvidia-driver-libs:i386" "nvidia-cuda-dev" "nvidia-cuda-toolkit")
-replace=("nvidia-driver-bin")
 _pkg="NVIDIA-Linux-x86_64-${pkgver}"
 url="https://us.download.nvidia.com/XFree86/Linux-x86_64/${pkgver}/${_pkg}.run"
 maintainer="xdavius <xdavius@github.com>"
@@ -39,7 +38,19 @@ create_links_32() {
 
 
 prepare() {
-    # PATCHES
+
+#UNINSTALL OLD DKMS IF PRESENT
+
+if [[ $(dpkg -l nvidia-driver-bin | cut -d " " -f 1 | grep ii) == "" ]]; then
+    echo "nothing to do"
+else
+    DKMS_VERSION=$(ls /var/lib/dkms/Nvidia | grep *.*.*)
+    echo "DKMS INSTALLED VERSION: ${DKMS_VERSION}"
+    sudo apt-get purge nvidia-driver-bin    
+    #dkms remove -m $DKMS_NAME -v $DKMS_VERSION --all || true
+fi
+
+# PATCHES
     wget https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-utils/-/raw/main/nvidia-drivers-470.223.02-gpl-pfn_valid.patch
     wget https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-utils/-/raw/main/nvidia.rules
     wget https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-utils/-/raw/main/nvidia-drm-outputclass.conf
@@ -103,9 +114,10 @@ cd ${_pkg}
 # firmware
     sudo install -Dm644 -t "${pkgdir}/usr/lib/firmware/nvidia/${pkgver}/" firmware/*.bin
 
-# Libnvidia-gtk
-    sudo install -Dm755 "libnvidia-gtk2.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/libnvidia-gtk2.so.${pkgver}"
-    sudo install -Dm755 "libnvidia-gtk3.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/libnvidia-gtk3.so.${pkgver}"
+# Libnvidia-gtk (unactivated for nvidia-settings from source)
+
+    #sudo install -Dm755 "libnvidia-gtk2.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/libnvidia-gtk2.so.${pkgver}"
+    #sudo install -Dm755 "libnvidia-gtk3.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/libnvidia-gtk3.so.${pkgver}"
 
 # GLX extension module for X
     sudo install -Dm755 "libglxserver_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/nvidia/xorg/libglxserver_nvidia.so.${pkgver}"
@@ -312,15 +324,6 @@ post_upgrade() {
 }
 # For the latter nore, see also https://gitlab.gnome.org/GNOME/gdm/-/issues/784
 
-pre_install() {
-
-if [[ $(dpkg -l nvidia-driver-bin | cut -d " " -f 1 | grep ii) == "" ]]; then
-    echo "nothing to do"
-else
-    dpkg -r nvidia-driver-bin
-fi
-
-}
 
 post_install() {
 
