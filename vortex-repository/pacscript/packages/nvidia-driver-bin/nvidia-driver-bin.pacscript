@@ -1,8 +1,9 @@
 name="nvidia-driver-bin"
 pkgbase="nvidia-utils"
 pkgname=('lib-nvidia-utils')
-pkgver="545.29.06"
-pkgrel="4"
+pkgver="535.154.05"
+pkgrel="1"
+epoch="2"
 pkgdesc="lib-nvidia-utils"
 gives="${name}"
 arch=('amd64')
@@ -311,7 +312,7 @@ set -e
 
 DKMS_NAME=nvidia
 DKMS_PACKAGE_NAME=$DKMS_NAME-dkms
-DKMS_VERSION=545.29.06
+DKMS_VERSION=535.154.05
 
 if [[ "$(dkms status -m $DKMS_NAME -v $DKMS_VERSION)" ]]; then
          dkms remove -m $DKMS_NAME -v $DKMS_VERSION --all || true
@@ -331,7 +332,7 @@ pre_remove() {
 set -e
 
 DKMS_NAME=nvidia
-DKMS_VERSION=545.29.06
+DKMS_VERSION=535.154.05
 
 if [[ "$(dkms status -m $DKMS_NAME -v $DKMS_VERSION)" ]]; then
          dkms remove -m $DKMS_NAME -v $DKMS_VERSION --all || true
