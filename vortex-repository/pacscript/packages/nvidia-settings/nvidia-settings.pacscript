@@ -6,15 +6,15 @@ gives="nvidia-settings"
 provides=("libxnvctrl0")
 replace=("libxnvctrl-dev" "libxnvctrl0")
 pkgname="nvidia-settings"
-pkgver="535.154.05"
+pkgver="545.29.06"
 pkgrel="1"
-epoch="2"
 pkgdesc='Tool for configuring the NVIDIA graphics driver'
 url="https://github.com/NVIDIA/nvidia-settings/archive/refs/tags/${pkgver}.tar.gz"
 arch=("amd64")
 license=('GPL2')
 makedepends=("inetutils-tools" "libjansson-dev" "libgtk-3-dev" "libxv-dev" "libvdpau-dev"  "libxext-dev" "libxxf86vm-dev" "m4")
 depends=("wget" "libjansson-dev" "libgtk-3-dev" "libxv-dev" "libvdpau-dev" "libxext-dev")
+replace=("nvidia-settings")
 pacdeps=("nvidia-driver-bin")
 options=('staticlibs')
 maintainer="xdavius <xdavius@github.com>"
@@ -51,6 +51,7 @@ package() {
     -e 's:__PIXMAP_PATH__:/usr/share/pixmaps:' \
     -e 's/__NVIDIA_SETTINGS_DESKTOP_CATEGORIES__/Settings;HardwareSettings;/' \
     -e 's/Icon=.*/Icon=nvidia-settings/' \
+    -e 's/Exec=.*/Exec=\/usr\/local\/bin\/nvidia-settings' \
     -i "${pkgdir}/usr/share/applications/nvidia-settings.desktop"
 
   #cd ${pkgname}-${pkgver}
@@ -60,6 +61,10 @@ package() {
   sudo install -Dm 644 src/libXNVCtrl/*.h -t "${pkgdir}/usr/include/NVCtrl"
   sudo install -d "${pkgdir}/usr/lib/"
   sudo cp -Pr src/out/libXNVCtrl.* -t "${pkgdir}/usr/lib/"
+
+  #link in /usr/bin
+  #sudo install -d "${pkgdir}/usr/bin/"
+  #sudo ln -s "${pkgdir}/usr/local/bin/nvidia-settings" "${pkgdir}/usr/bin/nvidia-settings"
 }
 
 # vim: ts=2 sw=2 et:

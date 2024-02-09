@@ -1,17 +1,17 @@
 name="nvidia-driver-bin"
 pkgbase="nvidia-utils"
 pkgname=('lib-nvidia-utils')
-pkgver="535.154.05"
+pkgver="545.29.06"
 pkgrel="1"
-epoch="2"
-pkgdesc="lib-nvidia-utils"
+pkgdesc="Nvidia Production Driver + lib32"
 gives="${name}"
 arch=('amd64')
 license=('custom')
 options=('!strip')
-makedepends=('patchelf')
+makedepends=("patchelf" "wget" "dkms" "linux-headers-amd64" "libglvnd-dev" "libnvidia-egl-wayland-dev" "zlib1g-dev" "libgcc-12-dev:i386" "zlib1g-dev:i386" "libglvnd-dev:i386")
 depends=("wget" "dkms" "linux-headers-amd64" "libglvnd-dev" "libnvidia-egl-wayland-dev" "zlib1g-dev" "libgcc-12-dev:i386" "zlib1g-dev:i386" "libglvnd-dev:i386")
 breaks=("nvidia-driver" "nvidia-driver-libs:i386" "nvidia-cuda-dev" "nvidia-cuda-toolkit")
+replace=("nvidia-driver-bin")
 _pkg="NVIDIA-Linux-x86_64-${pkgver}"
 url="https://us.download.nvidia.com/XFree86/Linux-x86_64/${pkgver}/${_pkg}.run"
 maintainer="xdavius <xdavius@github.com>"
@@ -25,6 +25,18 @@ create_links() {
         [[ -e "${_base}" ]] || sudo ln -s $(basename "${_soname}") "${_base}"
     done
 }
+
+
+create_links_32() {
+    # create soname links
+    for _lib in $(find "${pkgdir}" -name '*.so*' | grep -v 'xorg/'); do
+        _soname=$(dirname "${_lib}")/$(readelf -d "${_lib}" | grep -Po 'SONAME.*: \[\K[^]]*' || true)
+        _base=$(echo ${_soname} | sed -r 's/(.*).so.*/\1.so/')
+        [[ -e "${_soname}" ]] || sudo ln -s $(basename "${_lib}") "${_soname}"
+        [[ -e "${_base}" ]] || sudo ln -s $(basename "${_soname}") "${_base}"
+    done
+}
+
 
 prepare() {
     # PATCHES
@@ -64,23 +76,17 @@ DEST_MODULE_LOCATION[4]="/kernel/drivers/video"' dkms.conf
 
 
 package() {
-    cd "${_pkg}"
 
+cd ${_pkg}
 
 # Create some paths
-sudo mkdir -p ${pkgdir}/usr/lib/xorg/modules/drivers
-
-sudo mkdir -p ${pkgdir}/usr/lib/x86_64-linux-gnu
-
-sudo mkdir -p ${pkgdir}/usr/bin
-
-sudo mkdir -p ${pkgdir}/usr/lib/Nvidia/xorg
-
-sudo mkdir -p ${pkgver}usr/share/vulkan/implicit_layer.d
-
-sudo mkdir -p ${pkgdir}/usr/share/man/man1/
-
-sudo mkdir -p ${pkgver}/usr/lib/systemd/system
+#sudo mkdir -p ${pkgdir}/usr/lib/xorg/modules/drivers
+#sudo mkdir -p ${pkgdir}/usr/lib/x86_64-linux-gnu
+#sudo mkdir -p ${pkgdir}/usr/bin
+#sudo mkdir -p ${pkgdir}/usr/lib/Nvidia/xorg
+#sudo mkdir -p ${pkgver}usr/share/vulkan/implicit_layer.d
+#sudo mkdir -p ${pkgdir}/usr/share/man/man1/
+#sudo mkdir -p ${pkgver}/usr/lib/systemd/system
 
 # Check http://us.download.nvidia.com/XFree86/Linux-x86_64/${pkgver}/README/installedcomponents.html
 # for hints on what needs to be installed where.
@@ -230,7 +236,7 @@ sudo mkdir -p ${pkgver}/usr/lib/systemd/system
 
 # OpenCL
     sudo install -Dm644 nvidia.icd "${pkgdir}/etc/OpenCL/vendors/nvidia.icd"
-    sudo install -Dm755 "libnvidia-opencl.so.${pkgver}" "${pkgdir}/usr/lib/libnvidia-opencl.so.${pkgver}"
+    sudo install -Dm755 "libnvidia-opencl.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/libnvidia-opencl.so.${pkgver}"
 
     sudo mkdir -p "${pkgdir}/usr/share/licenses"
     sudo ln -s nvidia-utils "${pkgdir}/usr/share/licenses/opencl-nvidia"
@@ -291,12 +297,12 @@ sudo mkdir -p ${pkgver}/usr/lib/systemd/system
     # Optical flow
     sudo install -D -m755 "libnvidia-opticalflow.so.${pkgver}" "${pkgdir}/usr/lib/i386-linux-gnu/libnvidia-opticalflow.so.${pkgver}"
 
-    sudo rm -rf "${pkgdir}"/usr/{include,share,bin}
+    #sudo rm -rf "${pkgdir}"/usr/{include,share,bin}
     sudo mkdir -p "${pkgdir}/usr/share/licenses"
     sudo ln -s $_pkgbasename "${pkgdir}/usr/share/licenses/${pkgname}"
 
 # CREATE .SO SYMLINKS
-    create_links
+    create_links_32
 
 }
 
@@ -306,20 +312,30 @@ post_upgrade() {
 }
 # For the latter nore, see also https://gitlab.gnome.org/GNOME/gdm/-/issues/784
 
+pre_install() {
+
+if [[ $(dpkg -l nvidia-driver-bin | cut -d " " -f 1 | grep ii) == "" ]]; then
+    echo "nothing to do"
+else
+    dpkg -r nvidia-driver-bin
+fi
+
+}
+
 post_install() {
 
 set -e
 
 DKMS_NAME=nvidia
 DKMS_PACKAGE_NAME=$DKMS_NAME-dkms
-DKMS_VERSION=535.154.05
+DKMS_VERSION=545.29.06
 
 if [[ "$(dkms status -m $DKMS_NAME -v $DKMS_VERSION)" ]]; then
          dkms remove -m $DKMS_NAME -v $DKMS_VERSION --all || true
 fi
 
 dkms add -m $DKMS_NAME -v $DKMS_VERSION
-dkms build -m $DKMS_NAME -v $DKMS_VERSION && dkms install -m $DKMS_NAME -v $DKMS_VERSION || true
+dkms build -m $DKMS_NAME -v $DKMS_VERSION && dkms install -m $DKMS_NAME -v $DKMS_VERSION --force || true
 
 #ls /var/lib/initramfs-tools | xargs -n1 /usr/lib/dkms/dkms_autoinstaller start
 
@@ -332,7 +348,7 @@ pre_remove() {
 set -e
 
 DKMS_NAME=nvidia
-DKMS_VERSION=535.154.05
+DKMS_VERSION=545.29.06
 
 if [[ "$(dkms status -m $DKMS_NAME -v $DKMS_VERSION)" ]]; then
          dkms remove -m $DKMS_NAME -v $DKMS_VERSION --all || true
