@@ -3,8 +3,9 @@ pkgver="$(curl --silent "https://api.github.com/repos/Frogging-Family/linux-tkg/
     grep '"tag_name":' |
     sed -E 's/.*"([^"]+)".*/\1/' | cut -c2-)"
 
-gives="${name}"
+gives="linux-headers-tkg-eevdf"
 
+provides=("linux-headers-${pkgver}-tkg-eevdf")
 url="https://github.com/Frogging-Family/linux-tkg/releases/download/v${pkgver}/linux-headers-${pkgver}-tkg-eevdf_${pkgver}-1_amd64.deb"
 hash="$(curl -sL https://github.com/Frogging-Family/linux-tkg/releases/download/v${pkgver}/linux-headers-${pkgver}-tkg-eevdf_${pkgver}-1_amd64.deb |
     sha256sum |
