@@ -5,8 +5,8 @@ pkgver="$(curl --silent "https://api.github.com/repos/Frogging-Family/linux-tkg/
 
 gives="${name}"
 
-url="https://github.com/Frogging-Family/linux-tkg/releases/download/v$pkgver/linux-headers-$pkgver-tkg-eevdf_$pkgver-1_amd64.deb"
-hash="$(curl -sL https://github.com/Frogging-Family/linux-tkg/releases/download/v$pkgver/linux-headers-$pkgver-tkg-eevdf_$pkgver-1_amd64.deb |
+url="https://github.com/Frogging-Family/linux-tkg/releases/download/v${pkgver}/linux-headers-${pkgver}-tkg-eevdf_${pkgver}-1_amd64.deb"
+hash="$(curl -sL https://github.com/Frogging-Family/linux-tkg/releases/download/v${pkgver}/linux-headers-${pkgver}-tkg-eevdf_${pkgver}-1_amd64.deb |
     sha256sum |
     cut -d " " -f 1)"
 
