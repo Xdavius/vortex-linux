@@ -14,10 +14,3 @@ hash="$(curl -sL https://github.com/Frogging-Family/linux-tkg/releases/download/
 pkgdesc="Linux image tkg eevdf latest release"
 arch=('amd64')
 maintainer="xdavius <xdavius@github.com>"
-
-#prepare() {
-
-#pacstall -R linux-image-tkg-eevdf-deb linux-headers-tkg-eevdf-deb
-#sudo apt purge linux-image-${pkgver}-tkg-eevdf linux-headers-${pkgver}-tkg-eevdf
-
-#}
