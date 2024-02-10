@@ -42,7 +42,7 @@ build() {
 package() {
 
   export PREFIX=/usr
-  sudo make DESTDIR="${pkgdir}" install
+  sudo make PREFIX=/usr DESTDIR="${pkgdir}" install
 
   sudo install -D -m644 doc/nvidia-settings.desktop "${pkgdir}/usr/share/applications/nvidia-settings.desktop"
   sudo install -D -m644 doc/nvidia-settings.png "${pkgdir}/usr/share/pixmaps/nvidia-settings.png"
