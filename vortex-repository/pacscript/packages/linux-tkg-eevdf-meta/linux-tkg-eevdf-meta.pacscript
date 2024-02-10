@@ -13,7 +13,6 @@ maintainer="xdavius <xdavius@github.com>"
 
 prepare() {
 
-pacstall -R linux-image-tkg-eevdf-deb linux-headers-tkg-eevdf-deb
 sudo apt purge linux-image-${pkgver}-tkg-eevdf linux-headers-${pkgver}-tkg-eevdf
 
 }
