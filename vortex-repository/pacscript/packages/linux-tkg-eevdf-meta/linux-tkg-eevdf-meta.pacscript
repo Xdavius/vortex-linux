@@ -10,9 +10,3 @@ url="https://github.com/oklopfer/debs/raw/master/empty.tar.xz"
 pkgdesc="Linux tkg eevdf Metapackage latest release"
 arch=('amd64')
 maintainer="xdavius <xdavius@github.com>"
-
-prepare() {
-
-sudo apt purge linux-image-${pkgver}-tkg-eevdf linux-headers-${pkgver}-tkg-eevdf
-
-}
