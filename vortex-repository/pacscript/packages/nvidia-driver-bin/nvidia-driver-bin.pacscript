@@ -311,6 +311,10 @@ post_upgrade() {
   echo "If you run into trouble with CUDA not being available, run nvidia-modprobe first."
   echo "If you use GDM on Wayland, you might have to run systemctl enable --now nvidia-resume.service"
 
+#if [[ "$(dkms status -m $DKMS_NAME -v $DKMS_VERSION)" ]]; then
+#         dkms remove -m $DKMS_NAME -v $DKMS_VERSION --all || true
+#fi
+
 }
 # For the latter nore, see also https://gitlab.gnome.org/GNOME/gdm/-/issues/784
 
@@ -321,10 +325,6 @@ set -e
 DKMS_NAME=nvidia
 DKMS_PACKAGE_NAME=$DKMS_NAME-dkms
 DKMS_VERSION=545.29.06
-
-if [[ "$(dkms status -m $DKMS_NAME -v $DKMS_VERSION)" ]]; then
-         dkms remove -m $DKMS_NAME -v $DKMS_VERSION --all || true
-fi
 
 dkms add -m $DKMS_NAME -v $DKMS_VERSION
 dkms build -m $DKMS_NAME -v $DKMS_VERSION && dkms install -m $DKMS_NAME -v $DKMS_VERSION --force || true
