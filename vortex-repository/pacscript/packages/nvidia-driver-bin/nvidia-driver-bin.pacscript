@@ -39,17 +39,6 @@ create_links_32() {
 
 prepare() {
 
-#UNINSTALL OLD DKMS IF PRESENT
-
-if [[ $(dpkg -l nvidia-driver-bin | cut -d " " -f 1 | grep ii) == "" ]]; then
-    echo "nothing to do"
-else
-    DKMS_VERSION=$(ls /var/lib/dkms/Nvidia | grep *.*.*)
-    echo "DKMS INSTALLED VERSION: ${DKMS_VERSION}"
-    sudo apt-get purge nvidia-driver-bin    
-    #dkms remove -m $DKMS_NAME -v $DKMS_VERSION --all || true
-fi
-
 # PATCHES
     wget https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-utils/-/raw/main/nvidia-drivers-470.223.02-gpl-pfn_valid.patch
     wget https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-utils/-/raw/main/nvidia.rules
@@ -324,6 +313,19 @@ post_upgrade() {
 }
 # For the latter nore, see also https://gitlab.gnome.org/GNOME/gdm/-/issues/784
 
+pre_install() {
+
+#UNINSTALL OLD DKMS IF PRESENT
+
+if [[ $(dpkg -l nvidia-driver-bin | cut -d " " -f 1 | grep ii) == "" ]]; then
+    echo "nothing to do"
+else
+    DKMS_VERSION=$(dpkg -l nvidia-driver-bin | grep nvidia | cut -d " " -f 4 | cut -d "-" -f 1)
+    echo "DKMS INSTALLED VERSION: ${DKMS_VERSION}"  
+    dkms remove -m nvidia -v $DKMS_VERSION --all || true
+    #sudo apt-get purge nvidia-driver-bin  
+fi
+}
 
 post_install() {
 
