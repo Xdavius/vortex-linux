@@ -318,6 +318,20 @@ post_upgrade() {
 }
 # For the latter nore, see also https://gitlab.gnome.org/GNOME/gdm/-/issues/784
 
+pre_install() {
+
+nvidia_status=$(dkms status nvidia | cut -d "," -f1 | cut -d "/" -f1)
+
+if [[ "$(nvidia_status)" == "nvidia" ]]; then
+    DKMS_VERSION=$(dkms status nvidia | cut -d "," -f1 | cut -d "/" -f2)
+    echo "DKMS INSTALLED VERSION: ${DKMS_VERSION}"  
+    dkms remove -m nvidia -v $DKMS_VERSION --all --force || true
+else
+    echo "nothing to do"
+fi
+
+}
+
 post_install() {
 
 set -e
@@ -329,19 +343,22 @@ DKMS_VERSION=545.29.06
 dkms add -m $DKMS_NAME -v $DKMS_VERSION
 dkms build -m $DKMS_NAME -v $DKMS_VERSION && dkms install -m $DKMS_NAME -v $DKMS_VERSION --force || true
 
-#ls /var/lib/initramfs-tools | xargs -n1 /usr/lib/dkms/dkms_autoinstaller start
-
-post_upgrade
-
-}
-
-pre_remove() {
-
+echo "#!/usr/bin/bash
 set -e
 
 DKMS_NAME=nvidia
 DKMS_VERSION=545.29.06
 
-dkms remove -m $DKMS_NAME -v $DKMS_VERSION --all || true
+dkms remove -m $DKMS_NAME -v $DKMS_VERSION --all || true" > /usr/bin/nvidia-dkms-uninstaller
+
+chmod 755 /usr/bin/nvidia-dkms-uninstaller
+post_upgrade
+
+}
+
+post_remove() {
+
+/usr/bin/nvidia-dkms-uninstaller
+rm /usr/bin/nvidia-dkms-uninstaller
 
 }
