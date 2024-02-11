@@ -305,25 +305,24 @@ cd ${_pkg}
 # CREATE .SO SYMLINKS
     create_links_32
 
+#fix prerm script
+
+sudo mkdir -p "${pkgdir}/DEBIAN/"
+    echo "set -e
+
+DKMS_NAME=nvidia
+DKMS_PACKAGE_NAME=$DKMS_NAME-dkms
+DKMS_VERSION=545.29.06
+
+dkms remove -m nvidia -v 545.29.06 --all || true" | sudo tee ${pkgdir}/DEBIAN/prerm
+sudo chmod +x ${pkgdir}/DEBIAN/prerm
 }
 
 post_upgrade() {
   echo "If you run into trouble with CUDA not being available, run nvidia-modprobe first."
   echo "If you use GDM on Wayland, you might have to run systemctl enable --now nvidia-resume.service"
 
-
-
-}
-# For the latter nore, see also https://gitlab.gnome.org/GNOME/gdm/-/issues/784
-
-pre_install() {
-#!/bin/bash
-DKMS_NAME=$(dkms status nvidia | cut -d "," -f1 | cut -d "/" -f1)
-DKMS_VERSION=$(dkms status nvidia | cut -d "," -f1 | cut -d "/" -f1)
-if [[ "$DKMS_NAME" == "nvidia" ]]; then
-         dkms remove -m $DKMS_NAME -v $DKMS_VERSION --all || true
-fi
-
+  # For the latter nore, see also https://gitlab.gnome.org/GNOME/gdm/-/issues/784
 }
 
 post_install() {
@@ -334,13 +333,9 @@ DKMS_NAME=nvidia
 DKMS_PACKAGE_NAME=$DKMS_NAME-dkms
 DKMS_VERSION=545.29.06
 
-dkms add -m $DKMS_NAME -v $DKMS_VERSION
-dkms build -m $DKMS_NAME -v $DKMS_VERSION && dkms install -m $DKMS_NAME -v $DKMS_VERSION --force || true
+dkms add -m ${DKMS_NAME} -v ${DKMS_VERSION}
+dkms build -m ${DKMS_NAME} -v ${DKMS_VERSION} && dkms install -m ${DKMS_NAME} -v ${DKMS_VERSION} --force || true
 
 post_upgrade
-
-}
-
-post_remove() {
 
 }
