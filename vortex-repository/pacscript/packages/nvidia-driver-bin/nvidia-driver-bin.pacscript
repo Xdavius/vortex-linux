@@ -322,8 +322,6 @@ DKMS_NAME=$(dkms status nvidia | cut -d "," -f1 | cut -d "/" -f1)
 DKMS_VERSION=$(dkms status nvidia | cut -d "," -f1 | cut -d "/" -f1)
 if [[ "$DKMS_NAME" == "nvidia" ]]; then
          dkms remove -m $DKMS_NAME -v $DKMS_VERSION --all || true
-else
-    echo "nothing to do"
 fi
 
 }
