@@ -311,21 +311,18 @@ post_upgrade() {
   echo "If you run into trouble with CUDA not being available, run nvidia-modprobe first."
   echo "If you use GDM on Wayland, you might have to run systemctl enable --now nvidia-resume.service"
 
-#if [[ "$(dkms status -m $DKMS_NAME -v $DKMS_VERSION)" ]]; then
-#         dkms remove -m $DKMS_NAME -v $DKMS_VERSION --all || true
-#fi
+
 
 }
 # For the latter nore, see also https://gitlab.gnome.org/GNOME/gdm/-/issues/784
 
 pre_install() {
-
-nvidia_status=$(dkms status nvidia | cut -d "," -f1 | cut -d "/" -f1)
-
-if [[ "$(nvidia_status)" == "nvidia" ]]; then
-    DKMS_VERSION=$(dkms status nvidia | cut -d "," -f1 | cut -d "/" -f2)
-    echo "DKMS INSTALLED VERSION: ${DKMS_VERSION}"  
-    dkms remove -m nvidia -v $DKMS_VERSION --all --force || true
+#!/bin/bash
+DKMS_NAME=$(dkms status nvidia | cut -d "," -f1 | cut -d "/" -f1)
+DKMS_VERSION=$(dkms status nvidia | cut -d "," -f1 | cut -d "/" -f1)
+if [[ "$DKMS_NAME" == "nvidia" ]]; then
+         dkms remove -m $DKMS_NAME -v $DKMS_VERSION --all || true
+fi
 else
     echo "nothing to do"
 fi
@@ -343,22 +340,10 @@ DKMS_VERSION=545.29.06
 dkms add -m $DKMS_NAME -v $DKMS_VERSION
 dkms build -m $DKMS_NAME -v $DKMS_VERSION && dkms install -m $DKMS_NAME -v $DKMS_VERSION --force || true
 
-echo "#!/usr/bin/bash
-set -e
-
-DKMS_NAME=nvidia
-DKMS_VERSION=545.29.06
-
-dkms remove -m $DKMS_NAME -v $DKMS_VERSION --all || true" > /usr/bin/nvidia-dkms-uninstaller
-
-chmod 755 /usr/bin/nvidia-dkms-uninstaller
 post_upgrade
 
 }
 
 post_remove() {
-
-/usr/bin/nvidia-dkms-uninstaller
-rm /usr/bin/nvidia-dkms-uninstaller
 
 }
