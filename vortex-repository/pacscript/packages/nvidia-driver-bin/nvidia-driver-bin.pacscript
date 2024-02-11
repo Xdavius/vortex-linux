@@ -2,7 +2,7 @@ name="nvidia-driver-bin"
 pkgbase="nvidia-utils"
 pkgname=('lib-nvidia-utils')
 pkgver="545.29.06"
-pkgrel="2"
+pkgrel="1"
 pkgdesc="Nvidia Production Driver + lib32"
 gives="${name}"
 arch=('amd64')
@@ -317,13 +317,15 @@ pre_install() {
 
 #UNINSTALL OLD DKMS IF PRESENT
 
-if [[ $(dpkg -l nvidia-driver-bin | cut -d " " -f 1 | grep ii) == "" ]]; then
-    echo "nothing to do"
-else
-    DKMS_VERSION=$(dpkg -l nvidia-driver-bin | grep nvidia | cut -d " " -f 4 | cut -d "-" -f 1)
+nvidia_status=$(dkms status nvidia | cut -d "," -f1 | cut -d "/" -f1)
+
+if [[ ${nvidia_status) == "nvidia" ]]; then
+    DKMS_VERSION=$(dkms status nvidia | cut -d "," -f1 | cut -d "/" -f2)
     echo "DKMS INSTALLED VERSION: ${DKMS_VERSION}"  
-    dkms remove -m nvidia -v $DKMS_VERSION --all || true
+    dkms remove -m nvidia -v $DKMS_VERSION --all --force || true
     #sudo apt-get purge nvidia-driver-bin  
+else
+    echo "nothing to do"
 fi
 }
 
@@ -355,7 +357,7 @@ set -e
 DKMS_NAME=nvidia
 DKMS_VERSION=545.29.06
 
-if [[ "$(dkms status -m $DKMS_NAME -v $DKMS_VERSION)" ]]; then
+if [[ "$(dkms status nvidia | cut -d "," -f1 | cut -d "/" -f2)" == $DKMS_VERSION ]]; then
          dkms remove -m $DKMS_NAME -v $DKMS_VERSION --all || true
 fi
 
