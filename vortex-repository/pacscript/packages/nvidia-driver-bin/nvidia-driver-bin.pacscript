@@ -344,8 +344,6 @@ set -e
 DKMS_NAME=nvidia
 DKMS_VERSION=545.29.06
 
-if [[ "$(dkms status nvidia | cut -d "," -f1 | cut -d "/" -f2)" == $DKMS_VERSION ]]; then
-         dkms remove -m $DKMS_NAME -v $DKMS_VERSION --all || true
-fi
+dkms remove -m $DKMS_NAME -v $DKMS_VERSION --all || true
 
 }
