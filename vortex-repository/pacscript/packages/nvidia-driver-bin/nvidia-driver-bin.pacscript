@@ -313,22 +313,6 @@ post_upgrade() {
 }
 # For the latter nore, see also https://gitlab.gnome.org/GNOME/gdm/-/issues/784
 
-pre_install() {
-
-#UNINSTALL OLD DKMS IF PRESENT
-
-nvidia_status=$(dkms status nvidia | cut -d "," -f1 | cut -d "/" -f1)
-
-if [[ "$(nvidia_status)" == "nvidia" ]]; then
-    DKMS_VERSION=$(dkms status nvidia | cut -d "," -f1 | cut -d "/" -f2)
-    echo "DKMS INSTALLED VERSION: ${DKMS_VERSION}"  
-    dkms remove -m nvidia -v $DKMS_VERSION --all --force || true
-    #sudo apt-get purge nvidia-driver-bin  
-else
-    echo "nothing to do"
-fi
-}
-
 post_install() {
 
 set -e
