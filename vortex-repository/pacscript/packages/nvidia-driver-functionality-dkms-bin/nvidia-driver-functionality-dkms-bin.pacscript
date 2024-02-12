@@ -60,6 +60,7 @@ prepare() {
     wget ${patches_url}/prerm-nvidia
 
 # PREPARE
+
     sh "${_pkg}.run" --extract-only
     cd "${_pkg}"
     tar -xf nvidia-persistenced-init.tar.bz2
@@ -68,6 +69,7 @@ prepare() {
 
     # Fix incompat with Linux 6.6.15 and 6.7.3
     # From Gentoo at https://github.com/gentoo/gentoo/commit/c64caf5352e8b82edbaa2204aaf055cbcabfc8d1
+
     patch --no-backup-if-mismatch -Np2 -i "${srcdir}/nvidia-drivers-470.223.02-gpl-pfn_valid.patch"
 
     sed -i "s/__VERSION_STRING/${pkgver}/" dkms.conf
