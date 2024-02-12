@@ -1,2 +1,2 @@
-# vortex-linux
-New Linux distro based on Debian and Pacstall
+# Debian Vortex Project
+New Linux project based on Debian and Pacstall

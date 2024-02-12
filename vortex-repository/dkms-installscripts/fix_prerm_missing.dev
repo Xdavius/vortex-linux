@@ -1,0 +1,9 @@
+prepare()
+wget prerm
+
+package()
+#fix prerm script
+
+sudo mkdir -p "${pkgdir}/DEBIAN/"
+sudo mv ${srcdir}/prerm ${pkgdir}/DEBIAN/
+sudo chmod +x ${pkgdir}/DEBIAN/prerm

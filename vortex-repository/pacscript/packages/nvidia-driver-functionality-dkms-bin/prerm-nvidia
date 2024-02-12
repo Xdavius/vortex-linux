@@ -4,7 +4,7 @@
 
 set -e
 
-SRC_DKMS_NAME=""
+SRC_DKMS_NAME="nvidia"
 SRC_INSTALLED=$(ls /usr/src/ | grep $SRC_DKMS_NAME)
 DKMS_NAME=$(echo $SRC_INSTALLED | cut -d "-" -f1)
 DKMS_VERSION=$(echo $SRC_INSTALLED | cut -d "-" -f2)
