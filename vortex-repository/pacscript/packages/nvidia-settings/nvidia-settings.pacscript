@@ -3,20 +3,22 @@
 # Maintainer: Levente Polyak <anthraxx[at]archlinux[dot]org>
 name="nvidia-settings"
 gives="nvidia-settings"
-provides=("libxnvctrl0")
-replace=("libxnvctrl-dev" "libxnvctrl0")
+pkgdesc='Tool for configuring the NVIDIA graphics driver'
 pkgname="nvidia-settings"
 pkgver="545.29.06"
 pkgrel="1"
-pkgdesc='Tool for configuring the NVIDIA graphics driver'
+
+makedepends=("inetutils-tools" "libjansson-dev" "libgtk-3-dev" "libxv-dev" "libvdpau-dev"  "libxext-dev" "libxxf86vm-dev" "m4")
+depends=("wget" "libjansson-dev" "libgtk-3-dev" "libxv-dev" "libvdpau-dev" "libxext-dev")
+provides=("libxnvctrl0" "nvidia-settings")
+replace=("libxnvctrl0" "nvidia-settings")
+
 url="https://github.com/NVIDIA/nvidia-settings/archive/refs/tags/${pkgver}.tar.gz"
 arch=("amd64")
 license=('GPL2')
-makedepends=("inetutils-tools" "libjansson-dev" "libgtk-3-dev" "libxv-dev" "libvdpau-dev"  "libxext-dev" "libxxf86vm-dev" "m4")
-depends=("wget" "libjansson-dev" "libgtk-3-dev" "libxv-dev" "libvdpau-dev" "libxext-dev")
-replace=("nvidia-settings")
-pacdeps=("nvidia-driver-bin")
+
 options=('staticlibs')
+
 maintainer="xdavius <xdavius@github.com>"
 
 #hash=()
