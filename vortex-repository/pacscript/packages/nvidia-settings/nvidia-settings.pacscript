@@ -29,10 +29,8 @@ prepare() {
 
   patches_url="https://github.com/Xdavius/vortex-linux/blob/dev/vortex-repository/pacscript/packages/nvidia-settings"
 
-  # Download patches
   wget ${patches_url}/nvidia-settings-libxnvctrl_so.patch
 
-  # Apply patches
   patch -Np1 -i "nvidia-settings-libxnvctrl_so.patch"
 }
 
