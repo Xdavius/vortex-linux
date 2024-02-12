@@ -29,7 +29,7 @@ prepare() {
 
 # PATCHES
 
-  patches_url="https://github.com/Xdavius/vortex-linux/blob/dev/vortex-repository/pacscript/packages/nvidia-settings"
+  patches_url="https://raw.githubusercontent.com/Xdavius/vortex-linux/dev/vortex-repository/pacscript/packages/nvidia-settings"
 
   wget ${patches_url}/nvidia-settings-libxnvctrl_so.patch
 
