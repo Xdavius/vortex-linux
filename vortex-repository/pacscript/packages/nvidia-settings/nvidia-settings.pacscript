@@ -8,8 +8,8 @@ pkgname="nvidia-settings"
 pkgver="545.29.06"
 pkgrel="1"
 
-makedepends=("inetutils-tools" "libjansson-dev" "libgtk-3-dev" "libxv-dev" "libvdpau-dev"  "libxext-dev" "libxxf86vm-dev" "m4")
-depends=("wget" "libjansson-dev" "libgtk-3-dev" "libxv-dev" "libvdpau-dev" "libxext-dev")
+makedepends=("wget" "inetutils-tools" "libjansson-dev" "libgtk-3-dev" "libxv-dev" "libvdpau-dev"  "libxext-dev" "libxxf86vm-dev" "m4")
+depends=("libjansson-dev" "libgtk-3" "libxv*" "vdpau-driver-all" "libxext*")
 provides=("libxnvctrl0" "nvidia-settings")
 replace=("libxnvctrl0" "nvidia-settings")
 
