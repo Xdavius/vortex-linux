@@ -46,17 +46,18 @@ prepare() {
 
 # PATCHES
 
-    #git_branch=""
-    #wget row get patches
-    #source ./get-patches.sh
-    wget https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-utils/-/raw/main/nvidia-drivers-470.223.02-gpl-pfn_valid.patch
-    wget https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-utils/-/raw/main/nvidia.rules
-    wget https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-utils/-/raw/main/nvidia-drm-outputclass.conf
-    wget https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-utils/-/raw/main/nvidia-utils.sysusers
+    # ARCHLINUX PATCHES AND CONF FILES
+
+    patches_url="https://raw.githubusercontent.com/Xdavius/vortex-linux/dev/vortex-repository/pacscript/packages/nvidia-driver-functionality-dkms-bin"
+
+    wget ${patches_url}/nvidia-drivers-470.223.02-gpl-pfn_valid.patch
+    wget ${patches_url}/nvidia.rules
+    wget ${patches_url}/nvidia-drm-outputclass.conf
+    wget ${patches_url}/nvidia-utils.sysusers
 
     # POSTRM PATCH FOR PACSTALL
-    # Need git row url for nvidia
-    wget https://raw.githubusercontent.com/Xdavius/vortex-linux/dev/vortex-repository/dkms-installscripts/prerm
+
+    wget ${patches_url}/prerm-nvidia
 
 # PREPARE
     sh "${_pkg}.run" --extract-only
@@ -319,7 +320,7 @@ cd ${_pkg}
 # CREATE PRERM DEBIAN SCRIPT
 
 sudo mkdir -p "${pkgdir}/DEBIAN/"
-sudo mv ${srcdir}/prerm ${pkgdir}/DEBIAN/
+sudo mv ${srcdir}/prerm-nvidia ${pkgdir}/DEBIAN/prerm
 sudo chmod +x ${pkgdir}/DEBIAN/prerm
 
 }
