@@ -1,9 +1,9 @@
-name="nvidia-driver-functionality-dkms-bin"
+name="nvidia-driver-beta-dkms-bin"
 pkgbase="nvidia-utils"
 pkgname=('lib-nvidia-utils')
 pkgver="550.40.07"
 pkgrel="1"
-pkgdesc="Nvidia Production Driver + lib32"
+pkgdesc="Nvidia BETA Driver + lib32"
 gives="${name}"
 arch=('amd64')
 license=('custom')
@@ -68,12 +68,12 @@ prepare() {
     cd "${_pkg}"
     tar -xf nvidia-persistenced-init.tar.bz2
 
-    patch -d "$_pkg" -Np1 -i "${srcdir}/110-nvidia-change-dkms-conf.patch"
-    patch -d "$_pkg" -Np1 -i "${srcdir}/120-nvidia-linux-rt-gift.patch"
+    patch -Np1 -i "${srcdir}/110-nvidia-change-dkms-conf.patch"
+    patch -Np1 -i "${srcdir}/120-nvidia-linux-rt-gift.patch"
 
     # fix incompat with Linux 6.6.15 and 6.7.3
     # from Gentoo at https://github.com/gentoo/gentoo/commit/c64caf5352e8b82edbaa2204aaf055cbcabfc8d1
-    patch -d "$_pkg" -Np1 -i "${srcdir}/130-nvidia-linux-fix.patch"
+    patch -Np1 -i "${srcdir}/130-nvidia-linux-fix.patch"
 
     cd kernel
 
@@ -358,7 +358,7 @@ post_install() {
 set -e
 
 DKMS_NAME=nvidia
-DKMS_VERSION=545.29.06
+DKMS_VERSION=550.40.07
 
 dkms add -m ${DKMS_NAME} -v ${DKMS_VERSION}
 dkms build -m ${DKMS_NAME} -v ${DKMS_VERSION} && dkms install -m ${DKMS_NAME} -v ${DKMS_VERSION} --force || true
