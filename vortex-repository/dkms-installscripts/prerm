@@ -1,9 +1,12 @@
 #!/bin/sh
+
+# THIS IS A TEMPLATE FOR DKMS PRERM SCRIPT FOR PACSTALL
+
 set -e
 
-INSTALLED=$(ls /usr/src/ | grep nvidia)
-DKMS_NAME=$(echo $INSTALLED | cut -d "-" -f1)
-DKMS_VERSION=$(echo $INSTALLED | cut -d "-" -f2)
+SRC_DKMS_NAME=""
+SRC_INSTALLED=$(ls /usr/src/ | grep $SRC_DKMS_NAME)
+DKMS_NAME=$(echo $SRC_INSTALLED | cut -d "-" -f1)
+DKMS_VERSION=$(echo $SRC_INSTALLED | cut -d "-" -f2)
 
 dkms remove -m $DKMS_NAME -v $DKMS_VERSION --all || true
-
