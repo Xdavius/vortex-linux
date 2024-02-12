@@ -1,0 +1,8 @@
+#!/bin/sh
+set -e
+
+INSTALLED=$(ls /usr/src/ | grep nvidia)
+DKMS_NAME=$(echo $INSTALLED | cut -d "-" -f1)
+DKMS_VERSION=$(echo $INSTALLED | cut -d "-" -f2)
+
+dkms remove -m $DKMS_NAME -v $DKMS_VERSION --all || true
