@@ -9,7 +9,7 @@ pkgver="545.29.06"
 pkgrel="1"
 
 makedepends=("wget" "inetutils-tools" "libjansson-dev" "libgtk-3-dev" "libvdpau-dev" "libxv-dev" "libxext-dev" "libxxf86vm-dev" "m4")
-depends=("libjansson-dev" "libvdpau-dev"  "libxext-dev" "libxv-dev")
+depends=("libjansson-dev" "libvdpau-dev"  "libxext-dev" "libxv-dev" "libgtk-3-dev")
 optdepends=("vdpauinfo: Show VDPAU Opencl Info")
 provides=("libxnvctrl0" "nvidia-settings")
 replace=("libxnvctrl0" "nvidia-settings")
