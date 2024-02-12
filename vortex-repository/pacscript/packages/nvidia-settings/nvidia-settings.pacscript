@@ -21,7 +21,9 @@ options=('staticlibs')
 
 maintainer="xdavius <xdavius@github.com>"
 
-#hash=()
+hash="$(curl -sL ${url} |
+    sha256sum |
+    cut -d " " -f 1)"
 
 prepare() {
 
