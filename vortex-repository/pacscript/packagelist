@@ -3,5 +3,6 @@ linux-image-tkg-eevdf-deb
 linux-tkg-eevdf-meta
 cardpeek
 #nvidia-driver-bin
+nvidia-driver-beta-dkms-bin
 nvidia-driver-functionality-dkms-bin
 nvidia-settings
