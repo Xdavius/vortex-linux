@@ -11,8 +11,7 @@ options=('!strip')
 
 makedepends=("patchelf" "wget")
 depends=("dkms" "linux-headers-amd64" "libglvnd-dev" "libnvidia-egl-wayland-dev" "zlib1g-dev" "zlib1g-dev:i386" "libglvnd-dev:i386" "libgcc-12-dev:i386")
-optdepends=("glx-alternative-nvidia: Provide GLX alternative for Mesa/Proprietary and Prime/Bumblebee easy switch")
-breaks=("nvidia-driver" "nvidia-driver-any" "nvidia-driver-libs:i386" "nvidia-cuda-dev" "nvidia-cuda-toolkit" "nvidia-driver-bin" "nvidia-driver-functionality-dkms-bin" "nvidia-settings")
+breaks=("nvidia-driver" "nvidia-driver-any" "nvidia-driver-libs:i386" "nvidia-driver-bin" "nvidia-driver-functionality-dkms-bin" "nvidia-settings")
 provides=("nvidia-driver" "nvidia-driver-libs:i386" "nvidia-kernel-dkms" "nvidia-settings")
 
 _pkg="NVIDIA-Linux-x86_64-${pkgver}"
