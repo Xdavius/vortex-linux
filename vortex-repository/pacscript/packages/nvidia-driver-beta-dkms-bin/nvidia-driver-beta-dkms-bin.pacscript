@@ -132,7 +132,7 @@ cd ${_pkg}
     sudo ln -s "libglxserver_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/xorg/modules/extensions/libglxserver_nvidia.so.1"
     sudo ln -s "libglxserver_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/xorg/modules/extensions/libglxserver_nvidia.so"
 
-    # Wayland/GBM (LIB) (NEED LN CHECK)
+    # Wayland/GBM (LIB) 
     sudo mkdir -p "${pkgdir}/usr/lib/x86_64-linux-gnu/gbm"
     sudo ln -sr "${pkgdir}/usr/lib/x86_64-linux-gnu/libnvidia-allocator.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/gbm/nvidia-drm_gbm.so"
 
@@ -189,7 +189,7 @@ cd ${_pkg}
 
 # MISC STUFFS
 
-# application profiles
+    # application profiles
     sudo install -Dm644 nvidia-application-profiles-${pkgver}-rc "${pkgdir}/usr/share/nvidia/nvidia-application-profiles-${pkgver}-rc"
     sudo install -Dm644 nvidia-application-profiles-${pkgver}-key-documentation "${pkgdir}/usr/share/nvidia/nvidia-application-profiles-${pkgver}-key-documentation"
 
@@ -199,14 +199,14 @@ cd ${_pkg}
     sudo cp -r html "${pkgdir}/usr/share/doc/nvidia/"
     sudo ln -s nvidia "${pkgdir}/usr/share/doc/nvidia-utils"
 
-# new power management support
+    # new power management support
     sudo install -Dm644 systemd/system/*.service -t "${pkgdir}/usr/lib/systemd/system"
     sudo install -Dm755 systemd/system-sleep/nvidia "${pkgdir}/usr/lib/systemd/system-sleep/nvidia"
     sudo install -Dm755 systemd/nvidia-sleep.sh "${pkgdir}/usr/bin/nvidia-sleep.sh"
     sudo install -Dm755 nvidia-powerd "${pkgdir}/usr/bin/nvidia-powerd"
     sudo install -Dm644 nvidia-dbus.conf "${pkgdir}"/usr/share/dbus-1/system.d/nvidia-dbus.conf
 
-# distro specific files must be installed in /usr/share/X11/xorg.conf.d
+    # distro specific files must be installed in /usr/share/X11/xorg.conf.d
     sudo install -Dm644 "${srcdir}/nvidia-drm-outputclass.conf" "${pkgdir}/usr/share/X11/xorg.conf.d/10-nvidia-drm-outputclass.conf"
 
     sudo install -Dm644 "${srcdir}/nvidia-utils.sysusers" "${pkgdir}/usr/lib/sysusers.d/$pkgname.conf"
@@ -216,19 +216,19 @@ cd ${_pkg}
     echo "blacklist nouveau" | sudo install -Dm644 /dev/stdin "${pkgdir}/usr/lib/modprobe.d/${pkgname}.conf"
     echo "nvidia-uvm" | sudo install -Dm644 /dev/stdin "${pkgdir}/usr/lib/modules-load.d/${pkgname}.conf"
 
-# OpenCL
+    # OpenCL
     sudo install -Dm644 nvidia.icd "${pkgdir}/etc/OpenCL/vendors/nvidia.icd"
     sudo mkdir -p "${pkgdir}/usr/share/licenses"
     sudo ln -s nvidia-utils "${pkgdir}/usr/share/licenses/opencl-nvidia"
 
-# glvnd
+    # glvnd
     sudo install -Dm644 "10_nvidia.json" "${pkgdir}/usr/share/glvnd/egl_vendor.d/10_nvidia.json"
 
-# Vulkan ICD
+    # Vulkan ICD
     sudo install -Dm644 "nvidia_icd.json" "${pkgdir}/usr/share/vulkan/icd.d/nvidia_icd.json"
     sudo install -Dm644 "nvidia_layers.json" "${pkgdir}/usr/share/vulkan/implicit_layer.d/nvidia_layers.json"
 
-# Wayland/GBM (.json)
+    # Wayland/GBM (.json)
     sudo install -Dm644 15_nvidia_gbm.json "${pkgdir}/usr/share/egl/egl_external_platform.d/15_nvidia_gbm.json"
 
 # CREATE LIB64 SYMLINKS
@@ -240,7 +240,7 @@ cd ${_pkg}
 
     sudo install -Dt "${pkgdir}/usr/share/licenses/${pkgname}" -m644 "${srcdir}/${_pkg}/LICENSE"
 
-# firmwares
+# FIRMWARES
     sudo install -Dm644 -t "${pkgdir}/usr/lib/firmware/nvidia/${pkgver}/" firmware/*.bin
     sudo install -Dm755 "nvoptix.bin" "${pkgdir}/usr/share/nvidia/nvoptix.bin"
 
@@ -263,10 +263,8 @@ cd ${_pkg}
     # VDPAU
     sudo install -d "${pkgdir}/usr/lib/i386-linux-gnu/vdpau/"
     sudo mv "${pkgdir}/usr/lib/i386-linux-gnu/libvdpau_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/i386-linux-gnu/vdpau/libvdpau_nvidia.so.${pkgver}"
-    #sudo install -D -m755 "libvdpau_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/i386-linux-gnu/vdpau/libvdpau_nvidia.so.${pkgver}"
 
-# FIX : ORIGINAL RM FROM LIB32-NVIDIA-UTILS PKG, COMMENTED TO AVOID ERASE OF THE FORLDERS
-    #sudo rm -rf "${pkgdir}"/usr/{include,share,bin}
+    # Licences
     sudo mkdir -p "${pkgdir}/usr/share/licenses"
     sudo ln -s $_pkgbasename "${pkgdir}/usr/share/licenses/${pkgname}"
 
