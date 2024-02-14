@@ -10,7 +10,7 @@ license=('custom')
 options=('!strip')
 
 makedepends=("patchelf" "wget")
-depends=("dkms" "linux-headers-amd64" "libglvnd-dev" "libnvidia-egl-wayland-dev" "zlib1g-dev" "libc6:i386") # "zlib1g-dev:i386" "libglvnd-dev:i386" "libgcc-12-dev:i386")
+depends=("dkms" "linux-headers-amd64" "libglvnd-dev" "libnvidia-egl-wayland-dev" "zlib1g-dev" "zlib1g-dev:i386" "libglvnd-dev:i386" "libgcc-12-dev:i386")
 breaks=("nvidia-driver" "nvidia-driver-any" "nvidia-driver-libs:i386" "nvidia-driver-bin" "nvidia-driver-functionality-dkms-bin" "nvidia-settings")
 provides=("nvidia-driver" "nvidia-driver-libs:i386" "nvidia-kernel-dkms" "nvidia-settings")
 
