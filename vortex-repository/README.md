@@ -7,3 +7,7 @@ Install Pacstall :
 Install repository :
 
       pacstall -A https://raw.githubusercontent.com/Xdavius/vortex-linux/main/vortex-repository/pacscript
+
+Dev repository (USED FOR TESTING AND DEV - BECAREFULL) :
+
+      pacstall -A https://raw.githubusercontent.com/Xdavius/vortex-linux/main/vortex-repository/pacscript
