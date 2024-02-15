@@ -16,6 +16,7 @@ provides=("nvidia-driver" "nvidia-driver-libs:i386" "nvidia-kernel-dkms" "nvidia
 
 _pkg="NVIDIA-Linux-x86_64-${pkgver}"
 url="https://us.download.nvidia.com/XFree86/Linux-x86_64/${pkgver}/${_pkg}.run"
+hash="$(curl -sL $url | sha256sum | cut -d " " -f 1)"
 
 maintainer="xdavius <xdavius@github.com>"
 
