@@ -1,4 +1,4 @@
-name="nvidia-driver-bin"
+name="nvidia-driver-functionality-dkms-bundle"
 pkgbase="nvidia-utils"
 pkgname=('lib-nvidia-utils')
 pkgver="545.29.06"
@@ -8,11 +8,17 @@ gives="${name}"
 arch=('amd64')
 license=('custom')
 options=('!strip')
-makedepends=("patchelf") 
-depends=("wget" "dkms" "linux-headers-amd64" "libglvnd-dev" "libnvidia-egl-wayland-dev" "zlib1g-dev" "zlib1g-dev:i386" "libglvnd-dev:i386" "libgcc-12-dev:i386")
-breaks=("nvidia-driver" "nvidia-driver-libs:i386" "nvidia-cuda-dev" "nvidia-cuda-toolkit")
+
+makedepends=("patchelf" "wget")
+depends=("dkms" "linux-headers-amd64" "libglvnd-dev" "libnvidia-egl-wayland-dev" "zlib1g-dev" "libc6:i386" "libglvnd-dev:i386")
+breaks=("nvidia-driver" "nvidia-driver-any" "nvidia-driver-libs:i386" "nvidia-settings")
+replace=("nvidia-driver-beta-dkms-bundle" "nvidia-driver-production-dkms-bundle")
+provides=("nvidia-driver" "nvidia-driver-libs:i386" "nvidia-kernel-dkms" "nvidia-settings")
+
 _pkg="NVIDIA-Linux-x86_64-${pkgver}"
 url="https://us.download.nvidia.com/XFree86/Linux-x86_64/${pkgver}/${_pkg}.run"
+hash="$(curl -sL $url | sha256sum | cut -d " " -f 1)"
+
 maintainer="xdavius <xdavius@github.com>"
 
 create_links() {
@@ -40,12 +46,22 @@ create_links_32() {
 prepare() {
 
 # PATCHES
-    wget https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-utils/-/raw/main/nvidia-drivers-470.223.02-gpl-pfn_valid.patch
-    wget https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-utils/-/raw/main/nvidia.rules
-    wget https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-utils/-/raw/main/nvidia-drm-outputclass.conf
-    wget https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-utils/-/raw/main/nvidia-utils.sysusers
 
-    # PREPARE
+    # ARCHLINUX PATCHES AND CONF FILES
+
+    patches_url="https://raw.githubusercontent.com/Xdavius/vortex-linux/dev/vortex-repository/pacscript/packages/nvidia-driver-functionality-dkms-bundle"
+
+    wget ${patches_url}/nvidia-drivers-470.223.02-gpl-pfn_valid.patch
+    wget ${patches_url}/nvidia.rules
+    wget ${patches_url}/nvidia-drm-outputclass.conf
+    wget ${patches_url}/nvidia-utils.sysusers
+
+    # POSTRM PATCH FOR PACSTALL
+
+    wget ${patches_url}/prerm-nvidia
+
+# PREPARE
+
     sh "${_pkg}.run" --extract-only
     cd "${_pkg}"
     tar -xf nvidia-persistenced-init.tar.bz2
@@ -54,7 +70,8 @@ prepare() {
 
     # Fix incompat with Linux 6.6.15 and 6.7.3
     # From Gentoo at https://github.com/gentoo/gentoo/commit/c64caf5352e8b82edbaa2204aaf055cbcabfc8d1
-    patch --no-backup-if-mismatch -Np2 -i "$srcdir/nvidia-drivers-470.223.02-gpl-pfn_valid.patch"
+
+    patch --no-backup-if-mismatch -Np2 -i "${srcdir}/nvidia-drivers-470.223.02-gpl-pfn_valid.patch"
 
     sed -i "s/__VERSION_STRING/${pkgver}/" dkms.conf
     sed -i 's/__JOBS/`nproc`/' dkms.conf
@@ -77,16 +94,11 @@ DEST_MODULE_LOCATION[4]="/kernel/drivers/video"' dkms.conf
 
 package() {
 
+# ENTER FOLDER
+
 cd ${_pkg}
 
-# Create some paths
-#sudo mkdir -p ${pkgdir}/usr/lib/xorg/modules/drivers
-#sudo mkdir -p ${pkgdir}/usr/lib/x86_64-linux-gnu
-#sudo mkdir -p ${pkgdir}/usr/bin
-#sudo mkdir -p ${pkgdir}/usr/lib/Nvidia/xorg
-#sudo mkdir -p ${pkgver}usr/share/vulkan/implicit_layer.d
-#sudo mkdir -p ${pkgdir}/usr/share/man/man1/
-#sudo mkdir -p ${pkgver}/usr/lib/systemd/system
+# INSTALL LIB64 FROM NVIDIA-UTILS : /usr/lib/x86_64-linux-gnu/
 
 # Check http://us.download.nvidia.com/XFree86/Linux-x86_64/${pkgver}/README/installedcomponents.html
 # for hints on what needs to be installed where.
@@ -108,11 +120,11 @@ cd ${_pkg}
     #sudo install -Dm755 "libnvidia-gtk2.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/libnvidia-gtk2.so.${pkgver}"
     #sudo install -Dm755 "libnvidia-gtk3.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/libnvidia-gtk3.so.${pkgver}"
 
-# GLX extension module for X
-    sudo install -Dm755 "libglxserver_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/nvidia/xorg/libglxserver_nvidia.so.${pkgver}"
+# GLX extension module for X (dir changed from /usr/lib/x86_64-linux-gnu/nvidia/)
+    sudo install -Dm755 "libglxserver_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/xorg/modules/extensions/libglxserver_nvidia.so.${pkgver}"
 # Ensure that X finds glx
-    sudo ln -s "libglxserver_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/nvidia/xorg/libglxserver_nvidia.so.1"
-    sudo ln -s "libglxserver_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/nvidia/xorg/libglxserver_nvidia.so"
+    sudo ln -s "libglxserver_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/xorg/modules/extensions/libglxserver_nvidia.so.1"
+    sudo ln -s "libglxserver_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/xorg/modules/extensions/libglxserver_nvidia.so"
 
     sudo install -Dm755 "libGLX_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.${pkgver}"
 
@@ -242,6 +254,7 @@ cd ${_pkg}
     sudo mkdir -p "${pkgdir}/usr/share/licenses"
     sudo ln -s nvidia-utils "${pkgdir}/usr/share/licenses/opencl-nvidia"
 
+# CREATE LIB64 SYMLINKS
     create_links
 
 # DKMS
@@ -250,7 +263,7 @@ cd ${_pkg}
 
     sudo install -Dt "${pkgdir}/usr/share/licenses/${pkgname}" -m644 "${srcdir}/${_pkg}/LICENSE"
 
-# LIB32 : /usr/lib/i386-linux-gnu/
+# INSTALL LIB32 FROM LIB32-NVIDIA-UTILS : /usr/lib/i386-linux-gnu/
     cd 32
 
     # OpenCL
@@ -298,24 +311,21 @@ cd ${_pkg}
     # Optical flow
     sudo install -D -m755 "libnvidia-opticalflow.so.${pkgver}" "${pkgdir}/usr/lib/i386-linux-gnu/libnvidia-opticalflow.so.${pkgver}"
 
+# FIX : ORIGINAL RM FROM LIB32-NVIDIA-UTILS PKG, COMMENTED TO AVOID ERASE OF THE FORLDERS
     #sudo rm -rf "${pkgdir}"/usr/{include,share,bin}
     sudo mkdir -p "${pkgdir}/usr/share/licenses"
     sudo ln -s $_pkgbasename "${pkgdir}/usr/share/licenses/${pkgname}"
 
-# CREATE .SO SYMLINKS
+# CREATE LIB32 SYMLINKS
     create_links_32
 
-#fix prerm script
+# FIX : BECAUSE PACSTALL DOESN'T HAVE PRE_REMOVE() FUNCTION
+# CREATE PRERM DEBIAN SCRIPT
 
 sudo mkdir -p "${pkgdir}/DEBIAN/"
-    echo "set -e
-
-DKMS_NAME=nvidia
-DKMS_PACKAGE_NAME=$DKMS_NAME-dkms
-DKMS_VERSION=545.29.06
-
-dkms remove -m nvidia -v 545.29.06 --all || true" | sudo tee ${pkgdir}/DEBIAN/prerm
+sudo mv ${srcdir}/prerm-nvidia ${pkgdir}/DEBIAN/prerm
 sudo chmod +x ${pkgdir}/DEBIAN/prerm
+
 }
 
 post_upgrade() {
@@ -326,11 +336,10 @@ post_upgrade() {
 }
 
 post_install() {
-
+#!/bin/sh
 set -e
 
 DKMS_NAME=nvidia
-DKMS_PACKAGE_NAME=$DKMS_NAME-dkms
 DKMS_VERSION=545.29.06
 
 dkms add -m ${DKMS_NAME} -v ${DKMS_VERSION}

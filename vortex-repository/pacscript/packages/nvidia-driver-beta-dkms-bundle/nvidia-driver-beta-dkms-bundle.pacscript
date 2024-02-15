@@ -1,4 +1,4 @@
-name="nvidia-driver-beta-dkms-bin"
+name="nvidia-driver-beta-dkms-bundle"
 pkgbase="nvidia-utils"
 pkgname=('lib-nvidia-utils')
 pkgver="550.40.07"
@@ -12,7 +12,7 @@ options=('!strip')
 makedepends=("patchelf" "wget")
 depends=("dkms" "linux-headers-amd64" "libglvnd-dev" "libnvidia-egl-wayland-dev" "zlib1g-dev" "libc6:i386" "libglvnd-dev:i386")
 breaks=("nvidia-driver" "nvidia-driver-any" "nvidia-driver-libs:i386" "nvidia-settings")
-replace=("nvidia-driver-functionality-dkms-bin" "nvidia-driver-production-dkms-bin")
+replace=("nvidia-driver-functionality-dkms-bundle" "nvidia-driver-production-dkms-bundle")
 provides=("nvidia-driver" "nvidia-driver-libs:i386" "nvidia-kernel-dkms" "nvidia-settings")
 
 _pkg="NVIDIA-Linux-x86_64-${pkgver}"
@@ -49,7 +49,7 @@ prepare() {
 
     # ARCHLINUX PATCHES AND CONF FILES
 
-    patches_url="https://raw.githubusercontent.com/Xdavius/vortex-linux/dev/vortex-repository/pacscript/packages/nvidia-driver-beta-dkms-bin"
+    patches_url="https://raw.githubusercontent.com/Xdavius/vortex-linux/dev/vortex-repository/pacscript/packages/nvidia-driver-beta-dkms-bundle"
 
     wget ${patches_url}/110-nvidia-change-dkms-conf.patch
     wget ${patches_url}/120-nvidia-linux-rt-gift.patch
@@ -143,7 +143,7 @@ cd ${_pkg}
     sudo mv "${pkgdir}/usr/lib/x86_64-linux-gnu/libvdpau_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/vdpau/libvdpau_nvidia.so.${pkgver}"
 
     # DLSS (NGX) Wine DLL
-    install -D -m644 {,_}nvngx.dll -t "${pkgdir}/usr/lib/nvidia/wine"
+    sudo install -D -m644 {,_}nvngx.dll -t "${pkgdir}/usr/lib/nvidia/wine"
 
 # BINARIES
 

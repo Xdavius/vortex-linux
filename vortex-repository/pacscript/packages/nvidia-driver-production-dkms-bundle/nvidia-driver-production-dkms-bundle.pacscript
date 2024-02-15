@@ -1,9 +1,9 @@
-name="nvidia-driver-beta-dkms-bin"
+name="nvidia-driver-production-dkms-bundle"
 pkgbase="nvidia-utils"
 pkgname=('lib-nvidia-utils')
-pkgver="550.40.07"
+pkgver="535.154.05"
 pkgrel="1"
-pkgdesc="Nvidia BETA Driver + lib32"
+pkgdesc="Nvidia Production Driver + lib32 + DKMS"
 gives="${name}"
 arch=('amd64')
 license=('custom')
@@ -12,7 +12,7 @@ options=('!strip')
 makedepends=("patchelf" "wget")
 depends=("dkms" "linux-headers-amd64" "libglvnd-dev" "libnvidia-egl-wayland-dev" "zlib1g-dev" "libc6:i386" "libglvnd-dev:i386")
 breaks=("nvidia-driver" "nvidia-driver-any" "nvidia-driver-libs:i386" "nvidia-settings")
-replace=("nvidia-driver-functionality-dkms-bin" "nvidia-driver-production-dkms-bin")
+replace=("nvidia-driver-functionality-dkms-bundle" "nvidia-driver-beta-dkms-bundle")
 provides=("nvidia-driver" "nvidia-driver-libs:i386" "nvidia-kernel-dkms" "nvidia-settings")
 
 _pkg="NVIDIA-Linux-x86_64-${pkgver}"
@@ -49,11 +49,9 @@ prepare() {
 
     # ARCHLINUX PATCHES AND CONF FILES
 
-    patches_url="https://raw.githubusercontent.com/Xdavius/vortex-linux/dev/vortex-repository/pacscript/packages/nvidia-driver-beta-dkms-bin"
+    patches_url="https://raw.githubusercontent.com/Xdavius/vortex-linux/dev/vortex-repository/pacscript/packages/nvidia-driver-production-dkms-bundle"
 
-    wget ${patches_url}/110-nvidia-change-dkms-conf.patch
-    wget ${patches_url}/120-nvidia-linux-rt-gift.patch
-    wget ${patches_url}/130-nvidia-linux-fix.patch
+    wget ${patches_url}/nvidia-drivers-470.223.02-gpl-pfn_valid.patch
 
     wget ${patches_url}/nvidia.rules
     wget ${patches_url}/nvidia-drm-outputclass.conf
@@ -69,12 +67,9 @@ prepare() {
     cd "${_pkg}"
     tar -xf nvidia-persistenced-init.tar.bz2
 
-    patch -Np1 -i "${srcdir}/110-nvidia-change-dkms-conf.patch"
-    patch -Np1 -i "${srcdir}/120-nvidia-linux-rt-gift.patch"
-
     # fix incompat with Linux 6.6.15 and 6.7.3
     # from Gentoo at https://github.com/gentoo/gentoo/commit/c64caf5352e8b82edbaa2204aaf055cbcabfc8d1
-    patch -Np1 -i "${srcdir}/130-nvidia-linux-fix.patch"
+    patch -Np1 -i "${srcdir}/nvidia-drivers-470.223.02-gpl-pfn_valid.patch"
 
     cd kernel
 
@@ -134,7 +129,7 @@ cd ${_pkg}
     sudo ln -s "libglxserver_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/xorg/modules/extensions/libglxserver_nvidia.so.1"
     sudo ln -s "libglxserver_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/xorg/modules/extensions/libglxserver_nvidia.so"
 
-    # Wayland/GBM (LIB) 
+    # Wayland/GBM (LIB) (NEED LN CHECK)
     sudo mkdir -p "${pkgdir}/usr/lib/x86_64-linux-gnu/gbm"
     sudo ln -sr "${pkgdir}/usr/lib/x86_64-linux-gnu/libnvidia-allocator.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/gbm/nvidia-drm_gbm.so"
 
@@ -143,7 +138,8 @@ cd ${_pkg}
     sudo mv "${pkgdir}/usr/lib/x86_64-linux-gnu/libvdpau_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/vdpau/libvdpau_nvidia.so.${pkgver}"
 
     # DLSS (NGX) Wine DLL
-    install -D -m644 {,_}nvngx.dll -t "${pkgdir}/usr/lib/nvidia/wine"
+    sudo install -D -m644 {,_}nvngx.dll -t "${pkgdir}/usr/lib/nvidia/wine"
+
 
 # BINARIES
 
@@ -245,7 +241,7 @@ cd ${_pkg}
 
     sudo install -Dt "${pkgdir}/usr/share/licenses/${pkgname}" -m644 "${srcdir}/${_pkg}/LICENSE"
 
-# FIRMWARES
+# firmwares
     sudo install -Dm644 -t "${pkgdir}/usr/lib/firmware/nvidia/${pkgver}/" firmware/*.bin
     sudo install -Dm755 "nvoptix.bin" "${pkgdir}/usr/share/nvidia/nvoptix.bin"
 
@@ -297,7 +293,7 @@ post_install() {
 set -e
 
 DKMS_NAME=nvidia
-DKMS_VERSION=550.40.07
+DKMS_VERSION=535.154.05
 
 dkms add -m ${DKMS_NAME} -v ${DKMS_VERSION}
 dkms build -m ${DKMS_NAME} -v ${DKMS_VERSION} && dkms install -m ${DKMS_NAME} -v ${DKMS_VERSION} --force || true

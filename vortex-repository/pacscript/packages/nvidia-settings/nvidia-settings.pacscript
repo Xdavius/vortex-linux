@@ -9,10 +9,10 @@ pkgver="545.29.06"
 pkgrel="1"
 
 makedepends=("wget" "inetutils-tools" "libjansson-dev" "libgtk-3-dev" "libvdpau-dev" "libxv-dev" "libxext-dev" "libxxf86vm-dev" "m4")
-depends=("libjansson-dev" "libvdpau-dev"  "libxext-dev" "libxv-dev" "libgtk-3-dev")
+pacdeps=("nvidia-driver-functionality-dkms-bundle")
 optdepends=("vdpauinfo: Show VDPAU Opencl Info")
 provides=("libxnvctrl0" "nvidia-settings")
-replace=("libxnvctrl0" "nvidia-settings")
+replace=("libxnvctrl0" "nvidia-settings" "nvidia-driver-production-dkms-bundle" "nvidia-driver-beta-dkms-bundle")
 
 url="https://github.com/NVIDIA/nvidia-settings/archive/refs/tags/${pkgver}.tar.gz"
 arch=("amd64")

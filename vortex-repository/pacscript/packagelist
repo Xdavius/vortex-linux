@@ -1,8 +1,7 @@
 linux-headers-tkg-eevdf-deb
 linux-image-tkg-eevdf-deb
-linux-tkg-eevdf-meta
-cardpeek
-#nvidia-driver-bin
-nvidia-driver-beta-dkms-bin
-nvidia-driver-functionality-dkms-bin
+nvidia-driver-production-dkms-bundle
+nvidia-driver-functionality-dkms-bundle
+nvidia-driver-beta-dkms-bundle
 nvidia-settings
+cardpeek
