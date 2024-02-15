@@ -137,6 +137,10 @@ cd ${_pkg}
     sudo mkdir -p "${pkgdir}/usr/lib/x86_64-linux-gnu/vdpau"
     sudo mv "${pkgdir}/usr/lib/x86_64-linux-gnu/libvdpau_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/vdpau/libvdpau_nvidia.so.${pkgver}"
 
+    # DLSS (NGX) Wine DLL
+    sudo install -D -m644 {,_}nvngx.dll -t "${pkgdir}/usr/lib/nvidia/wine"
+
+
 # BINARIES
 
     # Debug
