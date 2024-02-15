@@ -5,7 +5,7 @@ breaks=("${gives}" "${gives}-app" "${gives}-debian-patched-deb")
 version_url="https://gitlab.archlinux.org/archlinux/packaging/packages/discord/-/raw/main/PKGBUILD"
 pkgver="$(curl -sL $version_url | grep pkgver= | cut -d "=" -f 2)"
 
-pkgdesc="Chat for Communities and Friends. Discord is the easiest way to communicate over voice, video, and text. Chat, hang out, and stay close with your friends and communities"
+pkgdesc="Download and install latest Discord version"
 
 maintainer="ObsidianPresidium <emil@aarestrup.nu>"
 arch=('amd64')
@@ -18,5 +18,5 @@ repology=("project: ${gives}")
 
 prepare() {
 mv "download?platform=linux&format=deb" "discord.deb"
-sudo dpkg -i discord.deb
+sudo apt install -y ./discord.deb
 }
