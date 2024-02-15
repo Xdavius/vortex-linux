@@ -1,5 +1,5 @@
 name="discord-autoupdated-deb"
-gives="discord"
+gives="discord-autoupdated-deb"
 breaks=("${gives}" "${gives}-app" "${gives}-debian-patched-deb")
 
 version_url="https://gitlab.archlinux.org/archlinux/packaging/packages/discord/-/raw/main/PKGBUILD"
@@ -15,3 +15,8 @@ hash="$(curl -sL $url | sha256sum | cut -d " " -f 1)"
 
 homepage='https://discord.com/'
 repology=("project: ${gives}")
+
+prepare() {
+mv "download?platform=linux&format=deb" "discord.deb"
+sudo dpkg -i discord.deb
+}
