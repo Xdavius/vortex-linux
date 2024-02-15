@@ -49,7 +49,7 @@ prepare() {
 
     # ARCHLINUX PATCHES AND CONF FILES
 
-    patches_url="https://raw.githubusercontent.com/Xdavius/vortex-linux/dev/vortex-repository/pacscript/packages/nvidia-driver-functionality-dkms-bin"
+    patches_url="https://raw.githubusercontent.com/Xdavius/vortex-linux/dev/vortex-repository/pacscript/packages/nvidia-driver-functionality-dkms-bundle"
 
     wget ${patches_url}/nvidia-drivers-470.223.02-gpl-pfn_valid.patch
     wget ${patches_url}/nvidia.rules
