@@ -23,6 +23,7 @@ Edit the file and change "main" to "dev"
 ## THANKS
 
 PACSTALL WEBSITE : https://pacstall.dev
+
 PACSTALL GITHUB  : https://github.com/pacstall
 
 ARCHLINUX GITLAB : https://gitlab.archlinux.org/archlinux
