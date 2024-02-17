@@ -10,7 +10,7 @@ pkgver=0.1.1
 pkgrel=1
 
 arch=('amd64')
-depends=("glibc-2.0-dev:i386" "libglvnd-dev:i386")
+depends=("glibc-2.0-dev:i386" "libglvnd-dev:i386" "glibc-2.0-dev" "libglvnd-dev")
 makedepends=('git' 'libx11-dev' 'mesa-common-dev' 'crossbuild-essential-i386' 'libglib2.0-dev:i386' 'g++-multilib')
 gives=('libstrangle')
 conflicts=('libstrangle')
