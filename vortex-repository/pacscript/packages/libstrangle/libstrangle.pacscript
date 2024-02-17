@@ -21,7 +21,7 @@ url="https://gitlab.com/torkel104/libstrangle/-/archive/${pkgver}/${pkgname}-${p
 hash="$(curl -sL $url | sha256sum | cut -d " " -f 1)"
 
 prepare() {
-    #cd ${pkgname}-${pkgver}
+    
     patches_url="https://raw.githubusercontent.com/Xdavius/vortex-linux/dev/vortex-repository/pacscript/packages/libstrangle"
 
     wget ${patches_url}/fix-compilation-gcc13.patch
@@ -35,12 +35,12 @@ prepare() {
 }
 
 build() {
-    #cd ${pkgname}-${pkgver}
+    
     make prefix=/usr
 }
 
 package() {
-    #cd ${pkgname}-${pkgver]
+    
     sudo make prefix=/usr DESTDIR="${pkgdir}" install-common install-32 install-64 install-ld
 
     # Install the README.md locally
