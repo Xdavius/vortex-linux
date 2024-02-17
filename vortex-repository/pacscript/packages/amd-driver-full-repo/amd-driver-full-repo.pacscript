@@ -7,7 +7,7 @@ pkgrel="1"
 
 depends=("gpg")
 
-url="https://github.com/NVIDIA/nvidia-settings/archive/refs/tags/${pkgver}.tar.gz"
+url="https://github.com/oklopfer/debs/raw/master/empty.tar.xz"
 arch=("amd64")
 license=('GPL2')
 
