@@ -8,12 +8,13 @@ pkgname="libstrangle"
 pkgdesc="Simple FPS Limiter"
 pkgver=0.1.1
 pkgrel=1
-
 arch=('amd64')
+gives=('libstrangle')
+
 depends=("glibc-2.0-dev:i386" "libglvnd-dev:i386" "glibc-2.0-dev" "libglvnd-dev")
 makedepends=('git' 'libx11-dev' 'mesa-common-dev' 'crossbuild-essential-i386' 'libglib2.0-dev:i386' 'g++-multilib')
-gives=('libstrangle')
-conflicts=('libstrangle')
+
+breaks=('libstrangle')
 license=('GPL3')
 
 url="https://gitlab.com/torkel104/libstrangle/-/archive/${pkgver}/${pkgname}-${pkgver}.tar.gz"
