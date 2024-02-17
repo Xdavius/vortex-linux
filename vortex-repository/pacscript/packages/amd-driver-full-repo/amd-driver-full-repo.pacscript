@@ -24,7 +24,7 @@ prepare() {
 
   wget ${patches_url}/amdfw.gpg.key
   wget ${patches_url}/amdvlk.gpg.key
-  wget ${patches_url}/rocm-keyring.gpg.key
+  wget ${patches_url}/rocm-keyring.gpg
   wget ${patches_url}/rocm.gpg.key
 
   wget ${patches_url}/rocm
@@ -32,7 +32,6 @@ prepare() {
 
   cat amdfw.gpg.key | gpg --dearmor | tee mdfw.gpg > /dev/null
   cat amdvlk.gpg.key | gpg --dearmor | tee amdvlk.gpg > /dev/null
-  cat rocm-keyring.gpg.key | gpg --dearmor | tee rocm-keyring.gpg > /dev/null
   cat rocm.gpg.key | gpg --dearmor | tee rocm.gpg > /dev/null
 }
 
@@ -41,7 +40,7 @@ package() {
   sudo install -Dm 644 "amdfw.gpg" "${pkgdir}/usr/share/keyrings/amdfw.gpg"
   sudo install -Dm 644 "amdvlk.gpg" "${pkgdir}/usr/share/keyrings/amdvlk.gpg"
   sudo install -Dm 644 "rocm.gpg" "${pkgdir}/usr/share/keyrings/rocm.gpg"
-  sudo install -Dm 644 "rocm-keyring.gpg" "${pkgdir}/usr/share/keyrings/rocm-keyring.gpg"
+  sudo install -Dm 644 "rocm-keyring.gpg" "${pkgdir}/etc/apt/trusted.gpg.d/rocm-keyring.gpg"
 
   sudo install -Dm 644 "rocm" "${pkgdir}/etc/apt/preferences.list.d/rocm"
   sudo install -Dm 644 "rocm.list" "${pkgdir}/etc/apt/sources.list.d/rocm.list"
