@@ -38,10 +38,10 @@ prepare() {
 
 package() {
 
-  sudo install -Dm 644 "amdfw.gpg" "${pkgdir}/usr/share/keyring/"
-  sudo install -Dm 644 "amdvlk.gpg" "${pkgdir}/usr/share/keyring/"
-  sudo install -Dm 644 "rocm.gpg" ""${pkgdir}/usr/share/keyring/"
-  sudo install -Dm 644 "rocm-keyring.gpg" "${pkgdir}/usr/share/keyring/"
+  sudo install -Dm 644 "amdfw.gpg" "${pkgdir}/usr/share/keyring/amdfw.gpg"
+  sudo install -Dm 644 "amdvlk.gpg" "${pkgdir}/usr/share/keyring/amdvlk.gpg"
+  sudo install -Dm 644 "rocm.gpg" ""${pkgdir}/usr/share/keyring/rocm.gpg"
+  sudo install -Dm 644 "rocm-keyring.gpg" "${pkgdir}/usr/share/keyring/rocm-keyring.gpg"
 
   sudo install -Dm 644 "rocm" "${pkgdir}/etc/apt/preferences.list.d/rocm"
   sudo install -Dm 644 "rocm.list" "${pkgdir}/etc/apt/sources.list.d/rocm.list"
