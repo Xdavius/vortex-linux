@@ -12,6 +12,8 @@ Dev repository (USED FOR TESTING AND DEV - BECAREFULL) :
 
       pacstall -A https://raw.githubusercontent.com/Xdavius/vortex-linux/dev/vortex-repository/pacscript
 
+Wiki for package maintainers/creator : https://github.com/pacstall/pacstall/wiki/Pacscript-101
+
 
 Change Branch :
 
