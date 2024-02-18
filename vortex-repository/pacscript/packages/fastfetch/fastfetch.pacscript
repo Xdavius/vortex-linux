@@ -33,7 +33,7 @@ hash="$(curl -sL $url | sha256sum | cut -d " " -f 1)"
 maintainer="xdavius <xdavius@github.com>"
 
 build() {
-  # Build fastfetch
+  
   mkdir -p build/
   (
     cd build/ || return 2
@@ -65,13 +65,5 @@ post_remove() {
   sudo rm -rf "/usr/share/licenses/${pkgname}"
   sudo rm -rf "/usr/share/doc/${pkgname}"
   sudo rm -rf "/usr/share/${pkgname}"
-
-  # Remove left over directories
-  if ask "Do you want to remove the configuration files?" Y; then
-    rm -rf "${homedir}/.config/fastfetch"
-  fi
-  if ask "Do you want to remove the left over cache?" Y; then
-    rm -rf "${homedir}/.cache/fastfetch"
-  fi
 }
 
