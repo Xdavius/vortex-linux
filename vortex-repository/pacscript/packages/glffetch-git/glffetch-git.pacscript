@@ -1,13 +1,12 @@
 name="glffetch-git"
-repology=("project: bar")
-arch=('any' 'amd64' 'arm64')
+
+arch=('any')
 pkgver="1.0"
 pkgrel="1"
 
-
+gives="glffetch"
 makedepends=("git")
 pacdeps=("fastfetch" "nerd-fonts-hack")
-gives="glffetch"
 pkgdesc="Configuration for Fastfetch for the GLF Team Challenges"
 
 url="https://github.com/Gaming-Linux-FR/GLFfetch.git"
@@ -22,7 +21,7 @@ prepare() {
 chmod u+x scripts/*.sh
 echo "install_name=${LOGNAME}" | tee glffetch.conf > /dev/null
 echo "#!/bin/bash
-fastfetch --config /home/${LOGNAME}/.config/fastfetch/GLFfetch/challenge.jsonc" | tee glffetch
+fastfetch --config /home/${LOGNAME}/.config/fastfetch/GLFfetch/challenge.jsonc" | tee glffetch > /dev/null
 
 }
 
