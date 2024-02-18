@@ -45,6 +45,10 @@ create_links_32() {
 
 prepare() {
 
+# ADD I386 ARCHITECTURE
+    sudo dpkg --add-architecture i386
+    sudo apt update
+
 # PATCHES
 
     # ARCHLINUX PATCHES AND CONF FILES
