@@ -23,6 +23,10 @@ url="https://gitlab.com/torkel104/libstrangle/-/archive/${pkgver}/${pkgname}-${p
 hash="$(curl -sL $url | sha256sum | cut -d " " -f 1)"
 
 prepare() {
+
+# ADD I386 ARCHITECTURE
+    sudo dpkg --add-architecture i386
+    sudo apt update
     
     patches_url="https://raw.githubusercontent.com/Xdavius/vortex-linux/dev/vortex-repository/pacscript/packages/libstrangle"
 
