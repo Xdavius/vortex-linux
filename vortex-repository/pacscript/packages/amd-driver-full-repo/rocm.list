@@ -1,0 +1,4 @@
+deb [arch=amd64] https://repo.radeon.com/amdgpu/latest/ubuntu jammy main
+deb [arch=amd64 signed-by=/usr/share/keyrings/rocm.gpg] https://repo.radeon.com/rocm/apt/latest jammy main
+deb [arch=amd64 signed-by=/usr/share/keyrings/amdfw.gpg] https://repo.radeon.com/fwupdator/amdfwflash/latest/deb ubuntu main
+deb [arch=amd64 signed-by=/usr/share/keyrings/amdvlk.gpg] https://repo.radeon.com/amdvlk/apt/debian bionic main
