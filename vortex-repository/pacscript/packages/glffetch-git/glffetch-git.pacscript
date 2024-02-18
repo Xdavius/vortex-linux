@@ -28,13 +28,16 @@ fastfetch --config /home/${LOGNAME}/.config/fastfetch/GLFfetch/challenge.jsonc" 
 
 package() {
 
-sudo install -Dm655 "glffetch.conf" "${pkgdir}/etc/glffetch.conf"
 source ./glffetch.conf
-sudo install -d "${pkgdir}/home/${install_name}/.config/GLFfetch/scripts"
-sudo install -Dm755 "glffetch" "${pkgdir}/usr/bin/glffetch"
-sudo install -Dm655 "GLF.png" "${pkgdir}/home/${install_name}/.config/GLFfetch/GLF.png"
-sudo install -Dm655 "challenge.jsonc" "${pkgdir}/home/${install_name}/.config/GLFfetch/challenge.jsonc"
 
-sudo install -Dm755 scripts/*.sh -t "${pkgdir}/home/${install_name}/.config/GLFfetch/scripts"
+sudo install -Dm655 "glffetch.conf" "${pkgdir}/etc/glffetch.conf"
+
+sudo install -d "${pkgdir}/home/${install_name}/.config/fastfetch/GLFfetch/scripts"
+sudo install -Dm755 "glffetch" "${pkgdir}/usr/bin/glffetch"
+
+sudo install -Dm655 "GLF.png" "${pkgdir}/home/${install_name}/.config/fastfetch/GLFfetch/GLF.png"
+sudo install -Dm655 "challenge.jsonc" "${pkgdir}/home/${install_name}/.config/fastfetch/GLFfetch/challenge.jsonc"
+
+sudo install -Dm755 scripts/*.sh -t "${pkgdir}/home/${install_name}/.config/fastfetch/GLFfetch/scripts"
 
 }
