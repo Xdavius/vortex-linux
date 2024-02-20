@@ -33,7 +33,7 @@ source ./glffetch.conf
 sudo install -Dm755 "glffetch" "${pkgdir}/usr/bin/glffetch"
 sudo install -Dm655 "glffetch.conf" "${pkgdir}/etc/glffetch.conf"
 
-sudo install -d "${pkgdir}/home/${install_name}/.config/fastfetch/GLFfetch/scripts"
+sudo install -dm775 "${pkgdir}/home/${install_name}/.config/fastfetch/GLFfetch/scripts"
 
 install -Dm655 "GLF.png" "${pkgdir}/home/${install_name}/.config/fastfetch/GLFfetch/GLF.png"
 install -Dm655 "challenge.jsonc" "${pkgdir}/home/${install_name}/.config/fastfetch/GLFfetch/challenge.jsonc"
