@@ -27,10 +27,7 @@ fastfetch --config /home/${LOGNAME}/.config/fastfetch/GLFfetch/challenge.jsonc" 
 
 package() {
 
-source ./glffetch.conf
-
 sudo install -Dm755 "glffetch" "${pkgdir}/usr/bin/glffetch"
-sudo install -Dm655 "glffetch.conf" "${pkgdir}/etc/glffetch.conf"
 
 sudo install -d "${pkgdir}/home/${LOGNAME}/.config/fastfetch/GLFfetch/scripts"
 
