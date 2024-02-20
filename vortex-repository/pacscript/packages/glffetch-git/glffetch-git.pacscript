@@ -2,7 +2,7 @@ name="glffetch-git"
 
 arch=('any')
 pkgver="1.0"
-pkgrel="1"
+pkgrel="2"
 
 gives="glffetch"
 makedepends=("git")
@@ -37,4 +37,11 @@ sudo install -Dm655 "challenge.jsonc" "${pkgdir}/home/${LOGNAME}/.config/fastfet
 sudo install -Dm755 scripts/*.sh -t "${pkgdir}/home/${LOGNAME}/.config/fastfetch/GLFfetch/scripts"
 
 sudo chown -R ${LOGNAME}:${LOGNAME} ${pkgdir}/home/${LOGNAME}/.config/fastfetch
+}
+
+post_install() {
+
+echo '
+IN CASE OF ERROR "PERMISSION DENIED", DELETE $HOME/.config/fastfetch/GLFfetch FOLDER AND REINSTALL THE PACKAGE
+'
 }
