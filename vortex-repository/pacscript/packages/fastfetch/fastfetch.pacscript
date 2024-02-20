@@ -5,6 +5,7 @@ pkgdesc="Like neofetch, but much faster because written in c"
 pkgver=$(curl --silent "https://api.github.com/repos/fastfetch-cli/fastfetch/releases/latest" |
     grep '"tag_name":' |
     sed -E 's/.*"([^"]+)".*/\1/')
+pkgrel=2
 
 makedepends=("cmake" "libpci-dev" "libvulkan-dev" "libwayland-dev" "libxrandr-dev" "libxcb-randr0-dev"
             "libdconf-dev" "libmagick++-dev" "libmagickcore-dev" "libdbus-1-dev" "libpci-dev" "libxfconf-0-dev"
