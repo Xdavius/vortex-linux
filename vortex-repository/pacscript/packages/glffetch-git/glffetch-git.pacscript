@@ -21,8 +21,7 @@ prepare() {
 chmod u+x scripts/*.sh
 echo "install_name=${LOGNAME}" | tee glffetch.conf > /dev/null
 echo "#!/bin/bash
-source /etc/glffetch.conf
-source /home/${install_name}/.config/fastfetch/GLFfetch/scripts/icon.sh
+source /home/${LOGNAME}/.config/fastfetch/GLFfetch/scripts/icon.sh
 fastfetch --config /home/${LOGNAME}/.config/fastfetch/GLFfetch/challenge.jsonc" | tee glffetch > /dev/null
 
 }
