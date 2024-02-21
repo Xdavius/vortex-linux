@@ -20,6 +20,8 @@ license=('GPL2')
 
 options=('staticlibs')
 
+incompatible=('ubuntu:*')
+
 maintainer="xdavius <xdavius@github.com>"
 
 hash="$(curl -sL ${url} |
