@@ -19,6 +19,8 @@ _pkg="NVIDIA-Linux-x86_64-${pkgver}"
 url="https://us.download.nvidia.com/XFree86/Linux-x86_64/${pkgver}/${_pkg}.run"
 hash="$(curl -sL $url | sha256sum | cut -d " " -f 1)"
 
+incompatible=('ubuntu:*')
+
 maintainer="xdavius <xdavius@github.com>"
 
 create_links() {
