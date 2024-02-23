@@ -15,6 +15,8 @@ breaks=("nvidia-driver" "nvidia-driver-any" "nvidia-driver-libs:i386" "nvidia-se
 replace=("nvidia-driver-beta-dkms-bundle" "nvidia-driver-production-dkms-bundle")
 provides=("nvidia-driver" "nvidia-driver-libs:i386" "nvidia-kernel-dkms" "nvidia-settings")
 
+incompatible=('ubuntu:*')
+
 _pkg="NVIDIA-Linux-x86_64-${pkgver}"
 url="https://us.download.nvidia.com/XFree86/Linux-x86_64/${pkgver}/${_pkg}.run"
 hash="$(curl -sL $url | sha256sum | cut -d " " -f 1)"

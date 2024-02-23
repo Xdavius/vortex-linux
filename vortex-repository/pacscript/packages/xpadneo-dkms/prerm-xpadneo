@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# THIS IS A TEMPLATE FOR DKMS PRERM SCRIPT FOR PACSTALL
+
+set -e
+
+SRC_DKMS_NAME="hid-xpadneo"
+SRC_INSTALLED=$(ls /usr/src/ | grep $SRC_DKMS_NAME)
+DKMS_NAME=$(echo $SRC_INSTALLED | cut -d "-" -f1)
+DKMS_VERSION=$(echo $SRC_INSTALLED | cut -d "-" -f2)
+
+dkms remove -m $DKMS_NAME -v $DKMS_VERSION --all || true

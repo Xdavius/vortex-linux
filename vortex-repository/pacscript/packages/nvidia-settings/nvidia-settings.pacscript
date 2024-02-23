@@ -14,6 +14,8 @@ optdepends=("vdpauinfo: Show VDPAU Opencl Info")
 provides=("libxnvctrl0" "nvidia-settings")
 replace=("libxnvctrl0" "nvidia-settings" "nvidia-driver-production-dkms-bundle" "nvidia-driver-beta-dkms-bundle")
 
+incompatible=('ubuntu:*')
+
 url="https://github.com/NVIDIA/nvidia-settings/archive/refs/tags/${pkgver}.tar.gz"
 arch=("amd64")
 license=('GPL2')
