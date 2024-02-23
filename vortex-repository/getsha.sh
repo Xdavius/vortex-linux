@@ -3,5 +3,7 @@ pkgver=$(curl --silent "https://api.github.com/repos/Frogging-Family/linux-tkg/r
     grep '"tag_name":' |
     sed -E 's/.*"([^"]+)".*/\1/' | cut -c2-)
 
-url="https://us.download.nvidia.com/XFree86/Linux-x86_64/${pkgver}/${_pkg}.run"
+# ONE LINE HASH
+
+url="full.tar.gz" ;\
 hash="$(curl -sL $url | sha256sum | cut -d " " -f 1)"
