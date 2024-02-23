@@ -55,17 +55,17 @@ package() {
     cd "${srcdir}/${_dkmsname}"
 
     # Module source
-    install -Dm0644 -t "${pkgdir}/usr/src/${_dkmsname}-${_pkgver}/src" src/*
+    sudo install -Dm0644 -t "${pkgdir}/usr/src/${_dkmsname}-${_pkgver}/src" src/*
 
     # DKMS files
-    install -Dm0644 -t "${pkgdir}/usr/src/${_dkmsname}-${_pkgver}" Makefile dkms.conf dkms.post_install dkms.post_remove
-    install -Dm0755 -t "${pkgdir}/usr/src/${_dkmsname}-${_pkgver}" dkms.post_install dkms.post_remove
+    sudo install -Dm0644 -t "${pkgdir}/usr/src/${_dkmsname}-${_pkgver}" Makefile dkms.conf dkms.post_install dkms.post_remove
+    sudo install -Dm0755 -t "${pkgdir}/usr/src/${_dkmsname}-${_pkgver}" dkms.post_install dkms.post_remove
 
     # modprobe aliases
-    install -Dm0644 -t "${pkgdir}/usr/lib/modprobe.d" etc-modprobe.d/*
+    sudo install -Dm0644 -t "${pkgdir}/usr/lib/modprobe.d" etc-modprobe.d/*
 
     # udev rules
-    install -Dm0644 -t "${pkgdir}/usr/lib/udev/rules.d" etc-udev-rules.d/*
+    sudo install -Dm0644 -t "${pkgdir}/usr/lib/udev/rules.d" etc-udev-rules.d/*
 
 # FIX : BECAUSE PACSTALL DOESN'T HAVE PRE_REMOVE() FUNCTION
 # CREATE PRERM DEBIAN SCRIPT
