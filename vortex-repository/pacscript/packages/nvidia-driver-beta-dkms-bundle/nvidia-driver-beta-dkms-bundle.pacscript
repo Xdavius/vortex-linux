@@ -1,7 +1,7 @@
 name="nvidia-driver-beta-dkms-bundle"
 pkgbase="nvidia-utils"
 pkgname=('lib-nvidia-utils')
-pkgver="550.40.07"
+pkgver="550.54.14"
 pkgrel="1"
 pkgdesc="Nvidia BETA Driver + lib32"
 gives="${name}"
@@ -303,7 +303,7 @@ post_install() {
 set -e
 
 DKMS_NAME=nvidia
-DKMS_VERSION=550.40.07
+DKMS_VERSION=550.54.14
 
 dkms add -m ${DKMS_NAME} -v ${DKMS_VERSION}
 dkms build -m ${DKMS_NAME} -v ${DKMS_VERSION} && dkms install -m ${DKMS_NAME} -v ${DKMS_VERSION} --force || true
