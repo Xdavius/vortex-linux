@@ -24,7 +24,7 @@ prepare() {
     patches_url="https://raw.githubusercontent.com/Xdavius/vortex-linux/dev/vortex-repository/pacscript/packages/xpadneo-dkms"
 
     wget ${patches_url}/drop-etc-files.patch
-    wget ${patches_url}/rename-marker.patch.patch
+    wget ${patches_url}/rename-marker.patch
     wget ${patches_url}/prerm-xpadneo
 
     cd "${_dkmsname}"
