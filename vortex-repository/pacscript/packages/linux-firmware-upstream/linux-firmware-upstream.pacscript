@@ -4,7 +4,7 @@ pkgbase=linux-firmware
 pkgname="linux-firmware"
 pkgver=20240220
 pkgrel=1
-pkgdesc="Firmware files for Linux"
+pkgdesc="Firmware files updates for Linux"
 
 license=('GPL2' 'GPL3' 'custom')
 arch=('any')
