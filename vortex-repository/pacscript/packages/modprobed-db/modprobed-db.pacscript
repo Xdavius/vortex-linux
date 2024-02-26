@@ -44,5 +44,5 @@ post_install() {
 
 		- Add all this module in one command :
 
-		echo "ext4\nfat\nvfat\nloop\nisofs\ncifs\nefivarfs\nusb_storage\nusbhid" >> /home/${LOGNAME}/.config/modprobed.db'
+		echo -e "ext4\nfat\nvfat\nloop\nisofs\ncifs\nefivarfs\nusb_storage\nusbhid" >> /home/${LOGNAME}/.config/modprobed.db'
 }
