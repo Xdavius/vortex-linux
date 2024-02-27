@@ -7,11 +7,11 @@ arch=('any')
 license=('MIT')
 depends=('kmod')
 optdepends=('sudo: needed for recall function')
-replaces=('modprobed_db')
+replaces=('modprobed_db' '${name}-git)
 breaks=('modprobed_db')
 gives="modprobed-db"
 homepage="https://wiki.archlinux.org/index.php/Modprobed-db"
-url="https://github.com/graysky2/$pkgname/archive/v$pkgver.tar.gz"
+url="https://github.com/graysky2/${pkgname}/archive/v${pkgver}.tar.gz"
 hash='34a0cd3fa67efea8a2ba657d90ce2f5e3ef480babb7f3bcae6c13bac1eb4eeab'
 
 build() {
@@ -19,8 +19,8 @@ build() {
 }
 
 package() {
-	sudo make DESTDIR="$pkgdir" install
-	sudo install -Dm644 MIT "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+	sudo make DESTDIR="${pkgdir}" install
+	sudo install -Dm644 MIT "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
 }
 
 post_install() {
