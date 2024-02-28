@@ -14,6 +14,10 @@ url="https://github.com/Frogging-Family/linux-tkg.git"
 
 maintainer="xdavius <xdavius@github.com>"
 
+pkgver() {
+git ls-remote "${url}" master | cut -f1 | cut -c1-8
+}
+
 prepare() {
 
     rm customization.cfg
@@ -24,6 +28,7 @@ prepare() {
     wget ${patches_url}/install.sh.new
 
     mv install.sh.new install.sh
+    chmod +x install.sh
 
     read -p "Do you want to use your modprobed-db database ? [y/N]" modprobed_ask
     case ${modprobed_ask} in

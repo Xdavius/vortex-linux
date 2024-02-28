@@ -372,14 +372,12 @@ if [ "$1" = "install" ]; then
     echo "    sudo dracut --force --hostonly ${_dracut_options} --kver $_kernelname"
     echo "    sudo grub-mkconfig -o /boot/grub/grub.cfg"
 
-    msg2 "Note: Uninstalling requires manual intervention, use './install.sh uninstall-help' for more information."
-    read -p "Continue ? Y/[n]: " _continue
-
     msg2 "Copying files over to /usr/src/$_headers_folder_name"
     if [ -d "${pkgdir}/usr/src/$_headers_folder_name" ]; then
       msg2 "Removing old folder in /usr/src/$_headers_folder_name"
       sudo rm -rf "${pkgdir}/usr/src/$_headers_folder_name"
     fi
+    mkdir -p "${pkgdir}/usr/src/$_headers_folder_name"
     sudo cp -R . "${pkgdir}/usr/src/$_headers_folder_name"
     sudo rm -rf "${pkgdir}/usr/src/$_headers_folder_name/.git"
     cd "${pkgdir}/usr/src/$_headers_folder_name"
@@ -390,11 +388,12 @@ if [ "$1" = "install" ]; then
     else
       sudo make INSTALL_MOD_PATH="${pkgdir}/usr" modules_install
     fi
-    msg2 "Removing modules from source folder in /usr/src/${_kernel_src_gentoo}"
+    msg2 "Removing modules from source folder in /usr/src/$_headers_folder_name"
     sudo find . -type f -name '*.ko' -delete
     sudo find . -type f -name '*.ko.cmd' -delete
 
     msg2 "Installing kernel"
+    sudo mkdir -p ${pkgdir}/boot
     sudo make INSTALL_PATH="${pkgdir}/boot" install
 
     fi
