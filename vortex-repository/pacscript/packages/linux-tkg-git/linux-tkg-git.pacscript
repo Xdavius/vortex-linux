@@ -19,7 +19,7 @@ prepare() {
     rm customization.cfg
     rm install.sh
 
-    patches_url="https://raw.githubusercontent.com/Xdavius/vortex-linux/dev/vortex-repository/pacscript/packages/linux-tkg"
+    patches_url="https://raw.githubusercontent.com/Xdavius/vortex-linux/dev/vortex-repository/pacscript/packages/linux-tkg-git"
     wget ${patches_url}/customization.cfg
     wget ${patches_url}/install.sh.new
 
