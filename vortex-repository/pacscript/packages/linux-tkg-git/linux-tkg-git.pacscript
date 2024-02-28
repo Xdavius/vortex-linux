@@ -44,12 +44,12 @@ prepare() {
 }
 
 post_install() {
-  update-initramfs -u -k all
+  update-initramfs -c -k all
   update-grub
 }
 
 post_remove() {
-
+  rm /boot/initrd.img-*-vortex
   update-grub
 }
 
