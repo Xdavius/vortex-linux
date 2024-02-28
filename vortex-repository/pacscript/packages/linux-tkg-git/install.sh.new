@@ -377,7 +377,7 @@ if [ "$1" = "install" ]; then
       msg2 "Removing old folder in /usr/src/$_headers_folder_name"
       sudo rm -rf "${pkgdir}/usr/src/$_headers_folder_name"
     fi
-    mkdir -p "${pkgdir}/usr/src/$_headers_folder_name"
+    sudo mkdir -p "${pkgdir}/usr/src/$_headers_folder_name"
     sudo cp -R . "${pkgdir}/usr/src/$_headers_folder_name"
     sudo rm -rf "${pkgdir}/usr/src/$_headers_folder_name/.git"
     cd "${pkgdir}/usr/src/$_headers_folder_name"
