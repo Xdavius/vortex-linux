@@ -396,6 +396,9 @@ if [ "$1" = "install" ]; then
     sudo mkdir -p ${pkgdir}/boot
     sudo make INSTALL_PATH="${pkgdir}/boot" install
 
+    sudo rm ${pkgdir}/usr/lib/modules/build
+    sudo ln -sf "${pkgdir}/usr/lib/modules/build" "${pkgbuild}/usr/src/linux-6.8.0-rc6-tkg-vortex"
+
   fi
 fi
 
