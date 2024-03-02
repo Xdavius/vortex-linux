@@ -19,7 +19,7 @@ incompatible=('ubuntu:*')
 
 _pkg="NVIDIA-Linux-x86_64-${pkgver}"
 url="https://us.download.nvidia.com/XFree86/Linux-x86_64/${pkgver}/${_pkg}.run"
-hash="$(curl -sL $url | sha256sum | cut -d " " -f 1)"
+#hash="$(curl -sL $url | sha256sum | cut -d " " -f 1)"
 
 maintainer="xdavius <xdavius@github.com>"
 
