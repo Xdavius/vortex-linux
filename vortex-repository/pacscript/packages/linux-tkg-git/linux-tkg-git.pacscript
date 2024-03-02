@@ -1,8 +1,6 @@
-name="linux-tkg"
-arch=('any' 'amd64' 'arm64')
-pkgver="$(curl --silent "https://api.github.com/repos/Frogging-Family/linux-tkg/releases/latest" |
-    grep '"tag_name":' |
-    sed -E 's/.*"([^"]+)".*/\1/' | cut -c2-)"
+name="linux-tkg-git"
+arch=('any')
+pkgver="8.0"
 pkgrel="1"
 
 makedepends=("build-essential" "patch" "ccache" 'bc' 'bison' 'cpio' 'fakeroot' 'flex' 'git' 'kmod' 'libelf-dev' 'libncurses5-dev' 'libssl-dev' 'lz4' 'qtbase5-dev' 'rsync' 'schedtool' 'wget' 'zstd' 'debhelper')
@@ -16,10 +14,21 @@ url="https://github.com/Frogging-Family/linux-tkg.git"
 
 maintainer="xdavius <xdavius@github.com>"
 
+pkgver() {
+git ls-remote "${url}" master | cut -f1 | cut -c1-8
+}
+
 prepare() {
+
     rm customization.cfg
-    patches_url="https://raw.githubusercontent.com/Xdavius/vortex-linux/dev/vortex-repository/pacscript/packages/linux-tkg"
+    rm install.sh
+
+    patches_url="https://raw.githubusercontent.com/Xdavius/vortex-linux/dev/vortex-repository/pacscript/packages/linux-tkg-git"
     wget ${patches_url}/customization.cfg
+    wget ${patches_url}/install.sh.new
+
+    mv install.sh.new install.sh
+    chmod +x install.sh
 
     read -p "Do you want to use your modprobed-db database ? [y/N]" modprobed_ask
     case ${modprobed_ask} in
@@ -34,20 +43,13 @@ prepare() {
     ./install.sh install
 }
 
-package() {
-
-    sudo make DESTDIR="${pkgdir}" headers_install
-    sudo make DESTDIR="${pkgdir}" modules_install
-    sudo make DESTDIR="${pkgdir}" install
-}
-
 post_install() {
-  update-initramfs -u -k all
+  update-initramfs -c -k all
   update-grub
 }
 
 post_remove() {
-
+  rm /boot/initrd.img-*-vortex
   update-grub
 }
 
