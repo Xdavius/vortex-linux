@@ -5,7 +5,7 @@ pkgver="$(curl --silent "https://api.github.com/repos/xdavius/linux-tkg/releases
 
 pkgrel="1"
 gives="linux-headers-${pkgver}-tkg-eevdf"
-url="https://github.com/Frogging-Family/xdavius/releases/download/${pkgver}/linux-headers-${pkgver}-tkg-eevdf_${pkgver}-1_amd64.deb"
+url="https://github.com/xdavius/linux-tkg/releases/download/${pkgver}/linux-headers-${pkgver}-tkg-eevdf_${pkgver}-1_amd64.deb"
 
 pkgdesc="Linux headers tkg eevdf latest release"
 arch=('amd64')
