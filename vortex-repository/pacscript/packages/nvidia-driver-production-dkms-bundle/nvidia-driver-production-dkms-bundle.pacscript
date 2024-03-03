@@ -1,9 +1,9 @@
 name="nvidia-driver-production-dkms-bundle"
 pkgbase="nvidia-utils"
 pkgname=('lib-nvidia-utils')
-pkgver="535.154.05"
+pkgver="550.54.14"
 pkgrel="1"
-pkgdesc="Nvidia Production Driver + lib32 + DKMS"
+pkgdesc="Nvidia BETA Driver + lib32"
 gives="${name}"
 arch=('amd64')
 license=('custom')
@@ -57,7 +57,9 @@ prepare() {
 
     patches_url="https://raw.githubusercontent.com/Xdavius/vortex-linux/dev/vortex-repository/pacscript/packages/nvidia-driver-production-dkms-bundle"
 
-    wget ${patches_url}/nvidia-drivers-470.223.02-gpl-pfn_valid.patch
+    wget ${patches_url}/110-nvidia-change-dkms-conf.patch
+    wget ${patches_url}/120-nvidia-linux-rt-gift.patch
+    wget ${patches_url}/130-nvidia-linux-fix.patch
 
     wget ${patches_url}/nvidia.rules
     wget ${patches_url}/nvidia-drm-outputclass.conf
@@ -73,9 +75,12 @@ prepare() {
     cd "${_pkg}"
     tar -xf nvidia-persistenced-init.tar.bz2
 
+    patch -Np1 -i "${srcdir}/110-nvidia-change-dkms-conf.patch"
+    patch -Np1 -i "${srcdir}/120-nvidia-linux-rt-gift.patch"
+
     # fix incompat with Linux 6.6.15 and 6.7.3
     # from Gentoo at https://github.com/gentoo/gentoo/commit/c64caf5352e8b82edbaa2204aaf055cbcabfc8d1
-    patch -Np1 -i "${srcdir}/nvidia-drivers-470.223.02-gpl-pfn_valid.patch"
+    patch -Np1 -i "${srcdir}/130-nvidia-linux-fix.patch"
 
     cd kernel
 
@@ -135,7 +140,7 @@ cd ${_pkg}
     sudo ln -s "libglxserver_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/xorg/modules/extensions/libglxserver_nvidia.so.1"
     sudo ln -s "libglxserver_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/xorg/modules/extensions/libglxserver_nvidia.so"
 
-    # Wayland/GBM (LIB) (NEED LN CHECK)
+    # Wayland/GBM (LIB) 
     sudo mkdir -p "${pkgdir}/usr/lib/x86_64-linux-gnu/gbm"
     sudo ln -sr "${pkgdir}/usr/lib/x86_64-linux-gnu/libnvidia-allocator.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/gbm/nvidia-drm_gbm.so"
 
@@ -145,7 +150,6 @@ cd ${_pkg}
 
     # DLSS (NGX) Wine DLL
     sudo install -D -m644 {,_}nvngx.dll -t "${pkgdir}/usr/lib/nvidia/wine"
-
 
 # BINARIES
 
@@ -247,7 +251,7 @@ cd ${_pkg}
 
     sudo install -Dt "${pkgdir}/usr/share/licenses/${pkgname}" -m644 "${srcdir}/${_pkg}/LICENSE"
 
-# firmwares
+# FIRMWARES
     sudo install -Dm644 -t "${pkgdir}/usr/lib/firmware/nvidia/${pkgver}/" firmware/*.bin
     sudo install -Dm755 "nvoptix.bin" "${pkgdir}/usr/share/nvidia/nvoptix.bin"
 
@@ -299,7 +303,7 @@ post_install() {
 set -e
 
 DKMS_NAME=nvidia
-DKMS_VERSION=535.154.05
+DKMS_VERSION=550.54.14
 
 dkms add -m ${DKMS_NAME} -v ${DKMS_VERSION}
 dkms build -m ${DKMS_NAME} -v ${DKMS_VERSION} && dkms install -m ${DKMS_NAME} -v ${DKMS_VERSION} --force || true
