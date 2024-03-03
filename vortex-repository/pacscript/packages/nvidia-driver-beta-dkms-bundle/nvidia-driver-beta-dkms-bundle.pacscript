@@ -228,7 +228,7 @@ cd ${_pkg}
     echo "nvidia-uvm" | sudo install -Dm644 /dev/stdin "${pkgdir}/usr/lib/modules-load.d/${pkgname}.conf"
 
     # Add drm_modeset=1
-    echo "options nvidia-drm modeset=1" | sudo install -Dm644 /dev/stdin "${pkgdir}/usr/lib/modules-load.d/nvidia-drm.conf"
+    echo "options nvidia-drm modeset=1" | sudo install -Dm644 /dev/stdin "${pkgdir}/usr/lib/modprobe.d/nvidia-drm.conf"
 
     # OpenCL
     sudo install -Dm644 nvidia.icd "${pkgdir}/etc/OpenCL/vendors/nvidia.icd"
