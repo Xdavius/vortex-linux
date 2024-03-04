@@ -292,10 +292,18 @@ sudo chmod +x ${pkgdir}/DEBIAN/prerm
 }
 
 post_upgrade() {
+  echo "--------------------------------------------------------------------------------------------------------------------------------"
+  echo "INSTALLATION NOTES :"
+  echo ""
   echo "If you run into trouble with CUDA not being available, run nvidia-modprobe first."
   echo "If you use GDM on Wayland, you might have to run systemctl enable --now nvidia-resume.service"
 
   # For the latter nore, see also https://gitlab.gnome.org/GNOME/gdm/-/issues/784
+  echo "If you experiment troubles with Wayland/Hyprland, Consider add nvidia-drm modeset=1 to modprobe.d :"
+  echo ""
+  echo "options nvidia-drm modeset=1" | sudo install -Dm644 /dev/stdin "/etc/lib/modprobe.d/nvidia-drm.conf"
+  echo ""
+  echo "Remove it by exécuting : sudo rm /etc/lib/modprobe.d/nvidia-drm.conf"
 }
 
 post_install() {
