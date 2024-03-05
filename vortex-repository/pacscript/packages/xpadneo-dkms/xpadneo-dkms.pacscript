@@ -86,6 +86,4 @@ DKMS_VERSION=v0.9.6
 dkms add -m ${DKMS_NAME} -v ${DKMS_VERSION}
 dkms build -m ${DKMS_NAME} -v ${DKMS_VERSION} && dkms install -m ${DKMS_NAME} -v ${DKMS_VERSION} --force || true
 
-post_upgrade
-
 }
