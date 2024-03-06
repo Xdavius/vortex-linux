@@ -8,7 +8,7 @@ pkgdesc="Firmware files updates for Linux"
 
 license=('GPL2' 'GPL3' 'custom')
 arch=('any')
-#makedepends=('git' 'rdfind' 'python3-jinja2' 'debhelper-compat')
+makedepends=('git' 'rdfind' 'python3-jinja2' 'debhelper-compat')
 breaks=("amdgpu-dkms-firmware")
 options=(!strip)
 
