@@ -301,7 +301,7 @@ post_upgrade() {
   # For the latter nore, see also https://gitlab.gnome.org/GNOME/gdm/-/issues/784
   echo "If you experiment troubles with Wayland/Hyprland, Consider add nvidia-drm modeset=1 to modprobe.d :"
   echo ""
-  echo "options nvidia-drm modeset=1" | sudo install -Dm644 /dev/stdin "/etc/lib/modprobe.d/nvidia-drm.conf"
+  echo 'echo "options nvidia-drm modeset=1" | sudo install -Dm644 /dev/stdin "/etc/modprobe.d/nvidia-drm.conf"'
   echo ""
   echo "Remove it by exécuting : sudo rm /etc/lib/modprobe.d/nvidia-drm.conf"
 }
