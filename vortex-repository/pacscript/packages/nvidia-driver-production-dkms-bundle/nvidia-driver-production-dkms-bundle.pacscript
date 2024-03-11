@@ -59,7 +59,6 @@ prepare() {
 
     wget ${patches_url}/110-nvidia-change-dkms-conf.patch
     wget ${patches_url}/120-nvidia-linux-rt-gift.patch
-    wget ${patches_url}/130-nvidia-linux-fix.patch
 
     wget ${patches_url}/nvidia.rules
     wget ${patches_url}/nvidia-drm-outputclass.conf
@@ -77,10 +76,6 @@ prepare() {
 
     patch -Np1 -i "${srcdir}/110-nvidia-change-dkms-conf.patch"
     patch -Np1 -i "${srcdir}/120-nvidia-linux-rt-gift.patch"
-
-    # fix incompat with Linux 6.6.15 and 6.7.3
-    # from Gentoo at https://github.com/gentoo/gentoo/commit/c64caf5352e8b82edbaa2204aaf055cbcabfc8d1
-    patch -Np1 -i "${srcdir}/130-nvidia-linux-fix.patch"
 
     cd kernel
 
@@ -292,7 +287,7 @@ sudo chmod +x ${pkgdir}/DEBIAN/prerm
 }
 
 post_upgrade() {
-  echo "--------------------------------------------------------------------------------------------------------------------------------"
+  echo "--------------------------------------------------------------------------------------------------------------"
   echo "INSTALLATION NOTES :"
   echo ""
   echo "If you run into trouble with CUDA not being available, run nvidia-modprobe first."
@@ -304,6 +299,10 @@ post_upgrade() {
   echo 'echo "options nvidia-drm modeset=1" | sudo install -Dm644 /dev/stdin "/etc/modprobe.d/nvidia-drm.conf"'
   echo ""
   echo "Remove it by exécuting : sudo rm /etc/lib/modprobe.d/nvidia-drm.conf"
+  echo ""
+  echo "--------------------------------------------------------------------------------------------------------------"
+
+  xdg-desktop-menu forceupdate
 }
 
 post_install() {
