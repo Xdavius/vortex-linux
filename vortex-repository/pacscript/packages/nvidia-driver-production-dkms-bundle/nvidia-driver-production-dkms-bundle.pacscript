@@ -2,7 +2,7 @@ name="nvidia-driver-production-dkms-bundle"
 pkgbase="nvidia-utils"
 pkgname=('lib-nvidia-utils')
 pkgver="550.67"
-pkgrel="1"
+pkgrel="2"
 pkgdesc="Nvidia BETA Driver + lib32"
 gives="${name}"
 arch=('amd64')
@@ -13,13 +13,18 @@ makedepends=("patchelf" "wget")
 depends=("dkms" "linux-headers-amd64" "libglvnd-dev" "libnvidia-egl-wayland-dev" "zlib1g-dev" "libc6:i386" "libglvnd-dev:i386")
 breaks=("nvidia-driver" "nvidia-driver-any" "nvidia-driver-libs:i386" "nvidia-settings")
 replace=("nvidia-driver-functionality-dkms-bundle" "nvidia-driver-beta-dkms-bundle")
-provides=("nvidia-driver" "nvidia-driver-libs:i386" "nvidia-kernel-dkms" "nvidia-settings")
+provides=("firmware-nvidia-gsp" "libcuda1" "libcudadebugger1" "libegl-nvidia0" "libgl1-nvidia-glvnd-glx" "libgles-nvidia1" "libgles-nvidia2" "libglx-nvidia0" "libnvcuvid1" "libnvidia-allocator1" \
+          "libnvidia-api1" "libnvidia-cfg1" "libnvidia-eglcore" "libnvidia-encode1" "libnvidia-fbc1" "libnvidia-glcore" "libnvidia-glvkspirv" "libnvidia-ml1" "libnvidia-ngx1" "libnvidia-nvvm4" \
+          "libnvidia-opticalflow1" "libnvidia-pkcs11-openssl3" "libnvidia-ptxjitcompiler1" "libnvidia-rtcore" "libnvoptix1" "nvidia-alternative" "nvidia-cuda-mps" "nvidia-detect" "nvidia-driver" \
+          "nvidia-driver-bin" "nvidia-driver-full" "nvidia-driver-libs" "nvidia-egl-common" "nvidia-egl-icd" "nvidia-kernel-dkms" "nvidia-kernel-source" "nvidia-kernel-support" "nvidia-legacy-check" \
+          "nvidia-libopencl1" "nvidia-opencl-common" "nvidia-opencl-icd" "nvidia-powerd" "nvidia-smi" "nvidia-suspend-common" "nvidia-vdpau-driver" "nvidia-vulkan-common" "nvidia-vulkan-icd" "xserver-xorg-video-nvidia" \
+          "nvidia-driver" "nvidia-driver-libs:i386" "nvidia-settings")
 
 incompatible=('ubuntu:*')
 
 _pkg="NVIDIA-Linux-x86_64-${pkgver}"
 url="https://us.download.nvidia.com/XFree86/Linux-x86_64/${pkgver}/${_pkg}.run"
-#hash="$(curl -sL $url | sha256sum | cut -d " " -f 1)"
+#hash=""
 
 maintainer="xdavius <xdavius@github.com>"
 
