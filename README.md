@@ -6,7 +6,7 @@ For the moment, only the pacstall repository is available.
 Clic [`HERE`](https://github.com/Xdavius/vortex-linux/tree/main/vortex-repository) for install instructions
 
 
-# Nvidia Quick setup Guide :
+## Nvidia Quick setup Guide
 
 
 ```
