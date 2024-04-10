@@ -308,6 +308,7 @@ post_upgrade() {
   echo "--------------------------------------------------------------------------------------------------------------"
 
   xdg-desktop-menu forceupdate
+  update-initramfs -u -k all
 }
 
 post_install() {
@@ -322,4 +323,8 @@ dkms build -m ${DKMS_NAME} -v ${DKMS_VERSION} && dkms install -m ${DKMS_NAME} -v
 
 post_upgrade
 
+}
+
+post_remove() {
+  update-initramfs -u -k all
 }
