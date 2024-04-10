@@ -305,6 +305,9 @@ post_upgrade() {
   echo ""
   echo "Remove it by exécuting : sudo rm /etc/lib/modprobe.d/nvidia-drm.conf"
   echo ""
+  echo "Some laptop before RTX can need these options : "
+  echo ""
+  echo "echo -e 'options nvidia NVreg_UsePageAttributeTable=1 NVreg_InitializeSystemMemoryAllocations=0 NVreg_DynamicPowerManagement=0x02' | sudo tee -a /etc/modprobe.d/nvidia-options.conf"
   echo "--------------------------------------------------------------------------------------------------------------"
 
   xdg-desktop-menu forceupdate
