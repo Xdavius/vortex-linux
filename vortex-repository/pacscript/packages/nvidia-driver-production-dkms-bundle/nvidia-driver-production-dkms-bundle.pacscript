@@ -327,4 +327,7 @@ post_upgrade
 
 post_remove() {
   update-initramfs -u -k all
+  #if [[ -f /etc/modprobe.d/nvidia-drm.conf ]] ; then
+  #  rm /etc/modprobe.d/nvidia-drm.conf
+  #fi
 }
