@@ -22,3 +22,8 @@ package() {
   sudo install -Dm644 mozilla.list "${pkgdir}/etc/apt/sources.list.d/mozilla.list"
   sudo install -Dm644 mozilla "${pkgdir}/etc/preferences.d/mozilla"
 }
+
+post_install() {
+  echo ""
+  echo "Please do manualy apt update && apt upgrade or apt install firefox if necessary"
+}
