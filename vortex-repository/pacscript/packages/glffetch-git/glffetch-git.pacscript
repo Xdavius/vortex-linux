@@ -1,15 +1,13 @@
-name="glffetch-git"
-
+pkgname="glffetch-git"
 arch=('any')
 pkgver="1.0"
-pkgrel="2"
-
+pkgrel="1"
 gives="glffetch"
 makedepends=("git")
 pacdeps=("fastfetch" "nerd-fonts-hack")
 pkgdesc="Configuration for Fastfetch for the GLF Team Challenges"
 
-url="https://github.com/Xdavius/GLFfetch.git"
+sources=("https://github.com/Xdavius/GLFfetch.git")
 
 maintainer="xdavius <xdavius@github.com>"
 
@@ -27,16 +25,12 @@ fastfetch --config /home/${LOGNAME}/.config/fastfetch/GLFfetch/challenge.jsonc" 
 
 package() {
 
-sudo install -Dm755 "glffetch" "${pkgdir}/usr/bin/glffetch"
-
-sudo install -d "${pkgdir}/home/${LOGNAME}/.config/fastfetch/GLFfetch/scripts"
-
-sudo install -Dm655 "GLF.png" "${pkgdir}/home/${LOGNAME}/.config/fastfetch/GLFfetch/GLF.png"
-sudo install -Dm655 "challenge.jsonc" "${pkgdir}/home/${LOGNAME}/.config/fastfetch/GLFfetch/challenge.jsonc"
-
-sudo install -Dm755 scripts/*.sh -t "${pkgdir}/home/${LOGNAME}/.config/fastfetch/GLFfetch/scripts"
-
-sudo chown -R ${LOGNAME}:${LOGNAME} ${pkgdir}/home/${LOGNAME}/.config/fastfetch
+install -Dm755 "glffetch" "${pkgdir}/usr/bin/glffetch"
+install -d "${pkgdir}/home/${LOGNAME}/.config/fastfetch/GLFfetch/scripts"
+install -Dm655 "GLF.png" "${pkgdir}/home/${LOGNAME}/.config/fastfetch/GLFfetch/GLF.png"
+install -Dm655 "challenge.jsonc" "${pkgdir}/home/${LOGNAME}/.config/fastfetch/GLFfetch/challenge.jsonc"
+install -Dm755 scripts/*.sh -t "${pkgdir}/home/${LOGNAME}/.config/fastfetch/GLFfetch/scripts"
+chown -R ${LOGNAME}:${LOGNAME} ${pkgdir}/home/${LOGNAME}/.config/fastfetch
 }
 
 post_install() {
