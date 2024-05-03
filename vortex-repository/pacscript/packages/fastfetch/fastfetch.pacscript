@@ -27,7 +27,7 @@ optdepends=("libvulkan1: Vulkan module and GPU fallback"
 
 breaks=("${pkgname}" "${pkgname}-bin" "${pkgname}-deb" "${pkgname}-app" "${pkgname}-git")
 
-sources=("https://github.com/fastfetch-cli/fastfetch/archive/refs/tags/${pkgver}.tar.gz")
+source=("https://github.com/fastfetch-cli/fastfetch/archive/refs/tags/${pkgver}.tar.gz")
 sha256sum="$(curl -sL $url | sha256sum | cut -d " " -f 1)"
 
 maintainer="xdavius <xdavius@github.com>"

@@ -7,7 +7,7 @@ makedepends=("git")
 pacdeps=("fastfetch" "nerd-fonts-hack")
 pkgdesc="Configuration for Fastfetch for the GLF Team Challenges"
 
-sources=("https://github.com/Xdavius/GLFfetch.git")
+source=("https://github.com/Xdavius/GLFfetch.git")
 
 maintainer="xdavius <xdavius@github.com>"
 
