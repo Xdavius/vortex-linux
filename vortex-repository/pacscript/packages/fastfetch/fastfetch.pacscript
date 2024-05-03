@@ -1,11 +1,10 @@
-name="fastfetch"
 pkgname="fastfetch"
 pkgdesc="Like neofetch, but much faster because written in c"
 
 pkgver=$(curl --silent "https://api.github.com/repos/fastfetch-cli/fastfetch/releases/latest" |
     grep '"tag_name":' |
     sed -E 's/.*"([^"]+)".*/\1/')
-pkgrel=2
+pkgrel=1
 
 makedepends=("cmake" "libpci-dev" "libvulkan-dev" "libwayland-dev" "libxrandr-dev" "libxcb-randr0-dev"
             "libdconf-dev" "libmagick++-dev" "libmagickcore-dev" "libdbus-1-dev" "libpci-dev" "libxfconf-0-dev"
@@ -28,8 +27,8 @@ optdepends=("libvulkan1: Vulkan module and GPU fallback"
 
 breaks=("${pkgname}" "${pkgname}-bin" "${pkgname}-deb" "${pkgname}-app" "${pkgname}-git")
 
-url="https://github.com/fastfetch-cli/fastfetch/archive/refs/tags/${pkgver}.tar.gz"
-hash="$(curl -sL $url | sha256sum | cut -d " " -f 1)"
+sources=("https://github.com/fastfetch-cli/fastfetch/archive/refs/tags/${pkgver}.tar.gz")
+sha256sum="$(curl -sL $url | sha256sum | cut -d " " -f 1)"
 
 maintainer="xdavius <xdavius@github.com>"
 
@@ -45,26 +44,26 @@ build() {
 
 package() {
   # Install license
-  sudo install -Dm644 "LICENSE" -t "${pkgdir}/usr/share/licenses/${pkgname}"
+  install -Dm644 "LICENSE" -t "${pkgdir}/usr/share/licenses/${pkgname}"
 
   # Install doc
-  sudo install -Dm644 "README.md" -t "${pkgdir}/usr/share/doc/${pkgname}"
+  install -Dm644 "README.md" -t "${pkgdir}/usr/share/doc/${pkgname}"
 
   # Install fastfetch and flashfetch binary
-  sudo install -Dm755 "build/fastfetch" "build/flashfetch" -t "${pkgdir}/usr/bin"
+  install -Dm755 "build/fastfetch" "build/flashfetch" -t "${pkgdir}/usr/bin"
 
   # Install bash completions
-  sudo install -Dm644 "completions/bash" "${pkgdir}/usr/share/bash-completion/completions/${pkgname}"
+  install -Dm644 "completions/bash" "${pkgdir}/usr/share/bash-completion/completions/${pkgname}"
 
   # Install presets
-  sudo mkdir -p "${pkgdir}/usr/share/${pkgname}/presets"
-  sudo cp -r presets/* "${pkgdir}/usr/share/${pkgname}/presets"
+  mkdir -p "${pkgdir}/usr/share/${pkgname}/presets"
+  cp -r presets/* "${pkgdir}/usr/share/${pkgname}/presets"
 }
 
 post_remove() {
   # Remove empty directories
-  sudo rm -rf "/usr/share/licenses/${pkgname}"
-  sudo rm -rf "/usr/share/doc/${pkgname}"
-  sudo rm -rf "/usr/share/${pkgname}"
+  rm -rf "/usr/share/licenses/${pkgname}"
+  rm -rf "/usr/share/doc/${pkgname}"
+  rm -rf "/usr/share/${pkgname}"
 }
 
