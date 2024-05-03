@@ -3,7 +3,8 @@ gives="discord-autoupdated-deb"
 breaks=("${gives}" "${gives}-app" "${gives}-debian-patched-deb")
 
 version_url="https://gitlab.archlinux.org/archlinux/packaging/packages/discord/-/raw/main/PKGBUILD"
-pkgver="$(curl -sL $version_url | grep pkgver= | cut -d "=" -f 2)"
+_pkgver="$(curl -sL $version_url | grep pkgver= | cut -d "=" -f 2)"
+pkgver="${_pkgver}"
 
 pkgdesc="Download and install latest Discord version"
 
