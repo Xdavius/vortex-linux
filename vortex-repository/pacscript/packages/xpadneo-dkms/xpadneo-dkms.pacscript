@@ -2,10 +2,9 @@
 # Contributor: vitor_hideyoshi <vitor.h.n.batista@gmail.com>
 # Contributor: katt <magunasu.b97@gmail.com>
 # Contributor: Yangtse Su <i@yangtse.me>
-name="xpadneo-dkms"
-_pkgname=xpadneo
-_dkmsname=hid-${_pkgname}
-pkgname=${_pkgname}-dkms
+pkgname="xpadneo-dkms"
+_gives=xpadneo
+_dkmsname=hid-${_gives}
 pkgver=0.9.6
 _pkgver=v${pkgver}
 pkgrel=1
@@ -14,10 +13,11 @@ arch=('any')
 homepage='https://github.com/atar-axis/xpadneo'
 license=('GPL3')
 depends=('dkms' 'bluetooth' 'linux-headers-amd64')
-url=("${homepage}/archive/${_pkgver}.tar.gz")
+source=(("${url}/archive/${_pkgver}.tar.gz"))
 
 
 prepare() {
+  cd "${_archive}"
 
     # PATCHES
 
@@ -52,27 +52,28 @@ check() {
 }
 
 package() {
+  cd "${_archive}"
     cd "${srcdir}/${_dkmsname}"
 
     # Module source
-    sudo install -Dm0644 -t "${pkgdir}/usr/src/${_dkmsname}-${_pkgver}/src" src/*
+    install -Dm0644 -t "${pkgdir}/usr/src/${_dkmsname}-${_pkgver}/src" src/*
 
     # DKMS files
-    sudo install -Dm0644 -t "${pkgdir}/usr/src/${_dkmsname}-${_pkgver}" Makefile dkms.conf dkms.post_install dkms.post_remove
-    sudo install -Dm0755 -t "${pkgdir}/usr/src/${_dkmsname}-${_pkgver}" dkms.post_install dkms.post_remove
+    install -Dm0644 -t "${pkgdir}/usr/src/${_dkmsname}-${_pkgver}" Makefile dkms.conf dkms.post_install dkms.post_remove
+    install -Dm0755 -t "${pkgdir}/usr/src/${_dkmsname}-${_pkgver}" dkms.post_install dkms.post_remove
 
     # modprobe aliases
-    sudo install -Dm0644 -t "${pkgdir}/usr/lib/modprobe.d" etc-modprobe.d/*
+    install -Dm0644 -t "${pkgdir}/usr/lib/modprobe.d" etc-modprobe.d/*
 
     # udev rules
-    sudo install -Dm0644 -t "${pkgdir}/usr/lib/udev/rules.d" etc-udev-rules.d/*
+    install -Dm0644 -t "${pkgdir}/usr/lib/udev/rules.d" etc-udev-rules.d/*
 
 # FIX : BECAUSE PACSTALL DOESN'T HAVE PRE_REMOVE() FUNCTION
 # CREATE PRERM DEBIAN SCRIPT
 
-sudo mkdir -p "${pkgdir}/DEBIAN/"
-sudo mv ${srcdir}/prerm-xpadneo ${pkgdir}/DEBIAN/prerm
-sudo chmod +x ${pkgdir}/DEBIAN/prerm
+mkdir -p "${pkgdir}/DEBIAN/"
+mv ${srcdir}/prerm-xpadneo ${pkgdir}/DEBIAN/prerm
+chmod +x ${pkgdir}/DEBIAN/prerm
 
 }
 

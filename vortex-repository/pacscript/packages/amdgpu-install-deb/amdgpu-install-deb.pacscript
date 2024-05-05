@@ -1,20 +1,21 @@
-name="amdgpu-install-deb"
+pkgname="amdgpu-install-deb"
 arch=('amd64')
 pkgver="6.0.60000"
 pkgrel="1"
 
-url="https://repo.radeon.com/amdgpu-install/latest/ubuntu/jammy/amdgpu-install_${pkgver}-${pkgrel}_all.deb"
+source=("https://repo.radeon.com/amdgpu-install/latest/ubuntu/jammy/amdgpu-install_${pkgver}-${pkgrel}_all.deb")
 
 gives="amdgpu-install"
 pkgdesc="AMDGPU Official Installer from Radeon Repository"
 
-hash="$(curl -sL $url | sha256sum | cut -d " " -f 1)"
+sha256sums=("$(curl -sL $url | sha256sum | cut -d " " -f 1)")
 
-maintainer="xdavius <xdavius@github.com>"
+maintainer=("xdavius <xdavius@github.com>")
 
 prepare() {
+  cd "${_archive}"
 
-sudo usermod -aG video,render $LOGNAME
+usermod -aG video,render $LOGNAME
 }
 
 post_install() {
