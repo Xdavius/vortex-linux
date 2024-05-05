@@ -16,8 +16,8 @@ prepare() {
   cd "${_archive}"
 chmod u+x scripts/*.sh
 echo "#!/bin/bash
-source /home/${LOGNAME}/.config/fastfetch/GLFfetch/scripts/icon.sh
-fastfetch --config /home/${LOGNAME}/.config/fastfetch/GLFfetch/challenge.jsonc" | tee glffetch > /dev/null
+source /opt/GLFfetch/scripts/icon.sh
+fastfetch --config /opt/GLFfetch/challenge.jsonc" | tee glffetch > /dev/null
 
 }
 
@@ -25,16 +25,11 @@ package() {
   cd "${_archive}"
 
 install -Dm755 "glffetch" "${pkgdir}/usr/bin/glffetch"
-install -d "${pkgdir}/home/${LOGNAME}/.config/fastfetch/GLFfetch/scripts"
-install -Dm655 "GLF.png" "${pkgdir}/home/${LOGNAME}/.config/fastfetch/GLFfetch/GLF.png"
-install -Dm655 "challenge.jsonc" "${pkgdir}/home/${LOGNAME}/.config/fastfetch/GLFfetch/challenge.jsonc"
-install -Dm755 scripts/*.sh -t "${pkgdir}/home/${LOGNAME}/.config/fastfetch/GLFfetch/scripts"
-chown -R ${LOGNAME}:${LOGNAME} ${pkgdir}/home/${LOGNAME}/.config/fastfetch
+install -d "${pkgdir}/opt/GLFfetch/scripts"
+install -Dm655 "GLF.png" "${pkgdir}/opt/GLFfetch/GLF.png"
+install -Dm655 "challenge.jsonc" "${pkgdir}/opt/GLFfetch/challenge.jsonc"
+install -Dm755 scripts/*.sh -t "${pkgdir}/opt/GLFfetch/scripts"
+#chown -R ${LOGNAME}:${LOGNAME} ${pkgdir}/home/${LOGNAME}/.config/fastfetch
 }
 
-post_install() {
 
-echo '
-IN CASE OF ERROR "PERMISSION DENIED", DELETE $HOME/.config/fastfetch/GLFfetch FOLDER AND REINSTALL THE PACKAGE
-'
-}
