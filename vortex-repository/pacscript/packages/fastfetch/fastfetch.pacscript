@@ -1,11 +1,12 @@
 pkgname="fastfetch"
 gives="fastfetch"
 pkgdesc="Like neofetch, but much faster because written in c"
-
-pkgver=$(curl --silent "https://api.github.com/repos/fastfetch-cli/fastfetch/releases/latest" |
-    grep '"tag_name":' |
-    sed -E 's/.*"([^"]+)".*/\1/')
-pkgrel=1
+pkgver="2.11.3"
+pkgrel="1"
+breaks=("${gives}" "${gives}-bin" "${gives}-deb" "${gives}-app" "${gives}-git")
+url="https://github.com/fastfetch-cli/fastfetch/archive/refs/tags/${pkgver}.tar.gz"
+source=("https://github.com/fastfetch-cli/fastfetch/archive/refs/tags/${pkgver}.tar.gz")
+maintainer=("xdavius <xdavius@github.com>")
 
 makedepends=("cmake" "libpci-dev" "libvulkan-dev" "libwayland-dev" "libxrandr-dev" "libxcb-randr0-dev"
             "libdconf-dev" "libmagick++-dev" "libmagickcore-dev" "libdbus-1-dev" "libpci-dev" "libxfconf-0-dev"
@@ -25,13 +26,6 @@ optdepends=("libvulkan1: Vulkan module and GPU fallback"
   "kitty: Terminal emulator GPU accelerated and display images"
   "chafa: Show images in non OpenGL Terminal"
 )
-
-breaks=("${gives}" "${gives}-bin" "${gives}-deb" "${gives}-app" "${gives}-git")
-
-source=("https://github.com/fastfetch-cli/fastfetch/archive/refs/tags/${pkgver}.tar.gz")
-sha256sum="$(curl -sL $url | sha256sum | cut -d " " -f 1)"
-
-maintainer=("xdavius <xdavius@github.com>")
 
 build() {
   cd "${_archive}"
