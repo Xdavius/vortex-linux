@@ -6,6 +6,7 @@ pkgrel="1"
 breaks=("${gives}" "${gives}-bin" "${gives}-deb" "${gives}-app" "${gives}-git")
 url="https://github.com/fastfetch-cli/fastfetch/archive/refs/tags/${pkgver}.tar.gz"
 source=("https://github.com/fastfetch-cli/fastfetch/archive/refs/tags/${pkgver}.tar.gz")
+repology=("project: ${gives}")
 maintainer=("xdavius <xdavius@github.com>")
 
 makedepends=("cmake" "libpci-dev" "libvulkan-dev" "libwayland-dev" "libxrandr-dev" "libxcb-randr0-dev"
