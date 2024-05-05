@@ -29,7 +29,7 @@ install -d "${pkgdir}/opt/GLFfetch/scripts"
 install -Dm655 "GLF.png" "${pkgdir}/opt/GLFfetch/GLF.png"
 install -Dm655 "challenge.jsonc" "${pkgdir}/opt/GLFfetch/challenge.jsonc"
 install -Dm755 scripts/*.sh -t "${pkgdir}/opt/GLFfetch/scripts"
-#chown -R ${LOGNAME}:${LOGNAME} ${pkgdir}/home/${LOGNAME}/.config/fastfetch
+chmod 747 ${pkgdir}/opt/GLFfetch
 }
 
 
