@@ -1,7 +1,6 @@
-name="nvidia-driver-beta-dkms-bundle"
+pkgname="nvidia-driver-beta-dkms-bundle"
 pkgbase="nvidia-utils"
-pkgname=('lib-nvidia-utils')
-pkgver="550.54.14"
+pkgver="555.42.02"
 pkgrel="1"
 pkgdesc="Nvidia BETA Driver + lib32"
 gives="${name}"
@@ -18,8 +17,8 @@ provides=("nvidia-driver" "nvidia-driver-libs:i386" "nvidia-kernel-dkms" "nvidia
 incompatible=('ubuntu:*')
 
 _pkg="NVIDIA-Linux-x86_64-${pkgver}"
-url="https://us.download.nvidia.com/XFree86/Linux-x86_64/${pkgver}/${_pkg}.run"
-#hash="$(curl -sL $url | sha256sum | cut -d " " -f 1)"
+source=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${pkgver}/${_pkg}.run")
+
 
 maintainer="xdavius <xdavius@github.com>"
 
@@ -46,7 +45,7 @@ create_links_32() {
 
 
 prepare() {
-
+    cd ${_archive}
 # ADD I386 ARCHITECTURE
     sudo dpkg --add-architecture i386
     sudo apt update
@@ -107,7 +106,7 @@ package() {
 
 # ENTER FOLDER
 
-cd ${_pkg}
+cd cd ${_archive}/${_pkg}
 
 # INSTALL LIB64 FROM NVIDIA-UTILS : /usr/lib/x86_64-linux-gnu/
 
