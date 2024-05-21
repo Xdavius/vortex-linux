@@ -1,41 +1,35 @@
 pkgname="glffetch-git"
+gives="glffetch-git"
 arch=('any')
 pkgver="1.0"
 pkgrel="1"
-gives="glffetch"
 makedepends=("git")
 pacdeps=("fastfetch" "nerd-fonts-hack")
 pkgdesc="Configuration for Fastfetch for the GLF Team Challenges"
-
+url="https://github.com/Xdavius/GLFfetch.git"
 source=("https://github.com/Xdavius/GLFfetch.git")
 
-maintainer="xdavius <xdavius@github.com>"
+maintainer=("xdavius <xdavius@github.com>")
 
-pkgver() {
-git ls-remote "${url}" main | cut -f1 | cut -c1-8
-}
 
 prepare() {
+  cd "${_archive}"
 chmod u+x scripts/*.sh
 echo "#!/bin/bash
-source /home/${LOGNAME}/.config/fastfetch/GLFfetch/scripts/icon.sh
-fastfetch --config /home/${LOGNAME}/.config/fastfetch/GLFfetch/challenge.jsonc" | tee glffetch > /dev/null
+source /opt/GLFfetch/scripts/icon.sh
+fastfetch --config /opt/GLFfetch/challenge.jsonc" | tee glffetch > /dev/null
 
 }
 
 package() {
+  cd "${_archive}"
 
 install -Dm755 "glffetch" "${pkgdir}/usr/bin/glffetch"
-install -d "${pkgdir}/home/${LOGNAME}/.config/fastfetch/GLFfetch/scripts"
-install -Dm655 "GLF.png" "${pkgdir}/home/${LOGNAME}/.config/fastfetch/GLFfetch/GLF.png"
-install -Dm655 "challenge.jsonc" "${pkgdir}/home/${LOGNAME}/.config/fastfetch/GLFfetch/challenge.jsonc"
-install -Dm755 scripts/*.sh -t "${pkgdir}/home/${LOGNAME}/.config/fastfetch/GLFfetch/scripts"
-chown -R ${LOGNAME}:${LOGNAME} ${pkgdir}/home/${LOGNAME}/.config/fastfetch
+install -d "${pkgdir}/opt/GLFfetch/scripts"
+install -Dm655 "GLF.png" "${pkgdir}/opt/GLFfetch/GLF.png"
+install -Dm655 "challenge.jsonc" "${pkgdir}/opt/GLFfetch/challenge.jsonc"
+install -Dm755 scripts/*.sh -t "${pkgdir}/opt/GLFfetch/scripts"
+chmod 747 ${pkgdir}/opt/GLFfetch
 }
 
-post_install() {
 
-echo '
-IN CASE OF ERROR "PERMISSION DENIED", DELETE $HOME/.config/fastfetch/GLFfetch FOLDER AND REINSTALL THE PACKAGE
-'
-}

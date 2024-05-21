@@ -1,10 +1,13 @@
 pkgname="fastfetch"
+gives="fastfetch"
 pkgdesc="Like neofetch, but much faster because written in c"
-
-pkgver=$(curl --silent "https://api.github.com/repos/fastfetch-cli/fastfetch/releases/latest" |
-    grep '"tag_name":' |
-    sed -E 's/.*"([^"]+)".*/\1/')
-pkgrel=1
+pkgver="2.11.3"
+pkgrel="1"
+breaks=("${gives}" "${gives}-bin" "${gives}-deb" "${gives}-app" "${gives}-git")
+url="https://github.com/fastfetch-cli/fastfetch/archive/refs/tags/${pkgver}.tar.gz"
+source=("https://github.com/fastfetch-cli/fastfetch/archive/refs/tags/${pkgver}.tar.gz")
+repology=("project: ${gives}")
+maintainer=("xdavius <xdavius@github.com>")
 
 makedepends=("cmake" "libpci-dev" "libvulkan-dev" "libwayland-dev" "libxrandr-dev" "libxcb-randr0-dev"
             "libdconf-dev" "libmagick++-dev" "libmagickcore-dev" "libdbus-1-dev" "libpci-dev" "libxfconf-0-dev"
@@ -25,14 +28,8 @@ optdepends=("libvulkan1: Vulkan module and GPU fallback"
   "chafa: Show images in non OpenGL Terminal"
 )
 
-breaks=("${pkgname}" "${pkgname}-bin" "${pkgname}-deb" "${pkgname}-app" "${pkgname}-git")
-
-source=("https://github.com/fastfetch-cli/fastfetch/archive/refs/tags/${pkgver}.tar.gz")
-sha256sum="$(curl -sL $url | sha256sum | cut -d " " -f 1)"
-
-maintainer="xdavius <xdavius@github.com>"
-
 build() {
+  cd "${_archive}"
   
   mkdir -p build/
   (
@@ -43,27 +40,28 @@ build() {
 }
 
 package() {
+  cd "${_archive}"
   # Install license
-  install -Dm644 "LICENSE" -t "${pkgdir}/usr/share/licenses/${pkgname}"
+  install -Dm644 "LICENSE" -t "${pkgdir}/usr/share/licenses/${gives}"
 
   # Install doc
-  install -Dm644 "README.md" -t "${pkgdir}/usr/share/doc/${pkgname}"
+  install -Dm644 "README.md" -t "${pkgdir}/usr/share/doc/${gives}"
 
   # Install fastfetch and flashfetch binary
   install -Dm755 "build/fastfetch" "build/flashfetch" -t "${pkgdir}/usr/bin"
 
   # Install bash completions
-  install -Dm644 "completions/bash" "${pkgdir}/usr/share/bash-completion/completions/${pkgname}"
+  install -Dm644 "completions/bash" "${pkgdir}/usr/share/bash-completion/completions/${gives}"
 
   # Install presets
-  mkdir -p "${pkgdir}/usr/share/${pkgname}/presets"
-  cp -r presets/* "${pkgdir}/usr/share/${pkgname}/presets"
+  mkdir -p "${pkgdir}/usr/share/${gives}/presets"
+  cp -r presets/* "${pkgdir}/usr/share/${gives}/presets"
 }
 
 post_remove() {
   # Remove empty directories
-  rm -rf "/usr/share/licenses/${pkgname}"
-  rm -rf "/usr/share/doc/${pkgname}"
-  rm -rf "/usr/share/${pkgname}"
+  rm -rf "/usr/share/licenses/${gives}"
+  rm -rf "/usr/share/doc/${gives}"
+  rm -rf "/usr/share/${gives}"
 }
 

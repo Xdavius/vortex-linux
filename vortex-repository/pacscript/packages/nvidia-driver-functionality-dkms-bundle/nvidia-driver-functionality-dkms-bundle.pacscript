@@ -1,10 +1,9 @@
-name="nvidia-driver-functionality-dkms-bundle"
+pkgname="nvidia-driver-functionality-dkms-bundle"
 pkgbase="nvidia-utils"
-pkgname=('lib-nvidia-utils')
+gives=('lib-nvidia-utils')
 pkgver="550.54.14"
 pkgrel="1"
 pkgdesc="Nvidia BETA Driver + lib32"
-gives="${name}"
 arch=('amd64')
 license=('custom')
 options=('!strip')
@@ -12,16 +11,16 @@ options=('!strip')
 makedepends=("patchelf" "wget")
 depends=("dkms" "linux-headers-amd64" "libglvnd-dev" "libnvidia-egl-wayland-dev" "zlib1g-dev" "libc6:i386" "libglvnd-dev:i386")
 breaks=("nvidia-driver" "nvidia-driver-any" "nvidia-driver-libs:i386" "nvidia-settings")
-replace=("nvidia-driver-production-dkms-bundle" "nvidia-driver-beta-dkms-bundle")
+replaces=("nvidia-driver-production-dkms-bundle" "nvidia-driver-beta-dkms-bundle")
 provides=("nvidia-driver" "nvidia-driver-libs:i386" "nvidia-kernel-dkms" "nvidia-settings")
 
 incompatible=('ubuntu:*')
 
 _pkg="NVIDIA-Linux-x86_64-${pkgver}"
-url="https://us.download.nvidia.com/XFree86/Linux-x86_64/${pkgver}/${_pkg}.run"
+source=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${pkgver}/${_pkg}.run")
 #hash="$(curl -sL $url | sha256sum | cut -d " " -f 1)"
 
-maintainer="xdavius <xdavius@github.com>"
+maintainer=("xdavius <xdavius@github.com>")
 
 create_links() {
     # create soname links
@@ -46,10 +45,11 @@ create_links_32() {
 
 
 prepare() {
+  cd "${_archive}"
 
 # ADD I386 ARCHITECTURE
-    sudo dpkg --add-architecture i386
-    sudo apt update
+    dpkg --add-architecture i386
+    apt update
 
 # PATCHES
 
@@ -104,6 +104,7 @@ DEST_MODULE_LOCATION[4]="/kernel/drivers/video"' dkms.conf
 
 
 package() {
+  cd "${_archive}"
 
 # ENTER FOLDER
 
@@ -116,82 +117,82 @@ cd ${_pkg}
 
 # LIB64
 
-    sudo install -Dm755 *.so* -t "${pkgdir}/usr/lib/x86_64-linux-gnu"
+    install -Dm755 *.so* -t "${pkgdir}/usr/lib/x86_64-linux-gnu"
 
     # FIX DEPENDENCIES
-    sudo rm ${pkgdir}/usr/lib/x86_64-linux-gnu/libGLESv1_CM.so.*
-    sudo rm ${pkgdir}/usr/lib/x86_64-linux-gnu/libGLESv2.so.*
-    sudo rm ${pkgdir}/usr/lib/x86_64-linux-gnu/libGL.so.*
-    sudo rm ${pkgdir}/usr/lib/x86_64-linux-gnu/libGLX.so.*
-    sudo rm ${pkgdir}/usr/lib/x86_64-linux-gnu/libGLdispatch.so.*
-    sudo rm ${pkgdir}/usr/lib/x86_64-linux-gnu/libOpenCL.so.*
-    sudo rm ${pkgdir}/usr/lib/x86_64-linux-gnu/libOpenGL.so.*
-    sudo rm ${pkgdir}/usr/lib/x86_64-linux-gnu/libEGL.so.*
-    sudo rm ${pkgdir}/usr/lib/x86_64-linux-gnu/libnvidia-egl-wayland.so.*
+    rm ${pkgdir}/usr/lib/x86_64-linux-gnu/libGLESv1_CM.so.*
+    rm ${pkgdir}/usr/lib/x86_64-linux-gnu/libGLESv2.so.*
+    rm ${pkgdir}/usr/lib/x86_64-linux-gnu/libGL.so.*
+    rm ${pkgdir}/usr/lib/x86_64-linux-gnu/libGLX.so.*
+    rm ${pkgdir}/usr/lib/x86_64-linux-gnu/libGLdispatch.so.*
+    rm ${pkgdir}/usr/lib/x86_64-linux-gnu/libOpenCL.so.*
+    rm ${pkgdir}/usr/lib/x86_64-linux-gnu/libOpenGL.so.*
+    rm ${pkgdir}/usr/lib/x86_64-linux-gnu/libEGL.so.*
+    rm ${pkgdir}/usr/lib/x86_64-linux-gnu/libnvidia-egl-wayland.so.*
 
     # X driver
-    sudo mkdir -p "${pkgdir}/usr/lib/xorg/modules/drivers"
-    sudo mv "${pkgdir}/usr/lib/x86_64-linux-gnu/nvidia_drv.so" "${pkgdir}/usr/lib/xorg/modules/drivers/nvidia_drv.so"
+    mkdir -p "${pkgdir}/usr/lib/xorg/modules/drivers"
+    mv "${pkgdir}/usr/lib/x86_64-linux-gnu/nvidia_drv.so" "${pkgdir}/usr/lib/xorg/modules/drivers/nvidia_drv.so"
 
     # GLX extension module for X
-    sudo mkdir -p "${pkgdir}/usr/lib/xorg/modules/extensions"
-    sudo mv "${pkgdir}/usr/lib/x86_64-linux-gnu/libglxserver_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/xorg/modules/extensions/libglxserver_nvidia.so.${pkgver}"
+    mkdir -p "${pkgdir}/usr/lib/xorg/modules/extensions"
+    mv "${pkgdir}/usr/lib/x86_64-linux-gnu/libglxserver_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/xorg/modules/extensions/libglxserver_nvidia.so.${pkgver}"
     # Ensure that X finds glx
-    sudo ln -s "libglxserver_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/xorg/modules/extensions/libglxserver_nvidia.so.1"
-    sudo ln -s "libglxserver_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/xorg/modules/extensions/libglxserver_nvidia.so"
+    ln -s "libglxserver_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/xorg/modules/extensions/libglxserver_nvidia.so.1"
+    ln -s "libglxserver_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/xorg/modules/extensions/libglxserver_nvidia.so"
 
     # Wayland/GBM (LIB) 
-    sudo mkdir -p "${pkgdir}/usr/lib/x86_64-linux-gnu/gbm"
-    sudo ln -sr "${pkgdir}/usr/lib/x86_64-linux-gnu/libnvidia-allocator.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/gbm/nvidia-drm_gbm.so"
+    mkdir -p "${pkgdir}/usr/lib/x86_64-linux-gnu/gbm"
+    ln -sr "${pkgdir}/usr/lib/x86_64-linux-gnu/libnvidia-allocator.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/gbm/nvidia-drm_gbm.so"
 
     # VDPAU
-    sudo mkdir -p "${pkgdir}/usr/lib/x86_64-linux-gnu/vdpau"
-    sudo mv "${pkgdir}/usr/lib/x86_64-linux-gnu/libvdpau_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/vdpau/libvdpau_nvidia.so.${pkgver}"
+    mkdir -p "${pkgdir}/usr/lib/x86_64-linux-gnu/vdpau"
+    mv "${pkgdir}/usr/lib/x86_64-linux-gnu/libvdpau_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/x86_64-linux-gnu/vdpau/libvdpau_nvidia.so.${pkgver}"
 
     # DLSS (NGX) Wine DLL
-    sudo install -D -m644 {,_}nvngx.dll -t "${pkgdir}/usr/lib/nvidia/wine"
+    install -D -m644 {,_}nvngx.dll -t "${pkgdir}/usr/lib/nvidia/wine"
 
 # BINARIES
 
     # Debug
-    sudo install -Dm755 nvidia-debugdump "${pkgdir}/usr/bin/nvidia-debugdump"
+    install -Dm755 nvidia-debugdump "${pkgdir}/usr/bin/nvidia-debugdump"
 
     # nvidia-xconfig
-    sudo install -Dm755 nvidia-xconfig "${pkgdir}/usr/bin/nvidia-xconfig"
-    sudo install -Dm644 nvidia-xconfig.1.gz "${pkgdir}/usr/share/man/man1/nvidia-xconfig.1.gz"
+    install -Dm755 nvidia-xconfig "${pkgdir}/usr/bin/nvidia-xconfig"
+    install -Dm644 nvidia-xconfig.1.gz "${pkgdir}/usr/share/man/man1/nvidia-xconfig.1.gz"
 
     # nvidia-bug-report
-    sudo install -Dm755 nvidia-bug-report.sh "${pkgdir}/usr/bin/nvidia-bug-report.sh"
+    install -Dm755 nvidia-bug-report.sh "${pkgdir}/usr/bin/nvidia-bug-report.sh"
 
     # nvidia-smi
-    sudo install -Dm755 nvidia-smi "${pkgdir}/usr/bin/nvidia-smi"
-    sudo install -Dm644 nvidia-smi.1.gz "${pkgdir}/usr/share/man/man1/nvidia-smi.1.gz"
+    install -Dm755 nvidia-smi "${pkgdir}/usr/bin/nvidia-smi"
+    install -Dm644 nvidia-smi.1.gz "${pkgdir}/usr/share/man/man1/nvidia-smi.1.gz"
 
     # nvidia-cuda-mps
-    sudo install -Dm755 nvidia-cuda-mps-server "${pkgdir}/usr/bin/nvidia-cuda-mps-server"
-    sudo install -Dm755 nvidia-cuda-mps-control "${pkgdir}/usr/bin/nvidia-cuda-mps-control"
-    sudo install -Dm644 nvidia-cuda-mps-control.1.gz "${pkgdir}/usr/share/man/man1/nvidia-cuda-mps-control.1.gz"
+    install -Dm755 nvidia-cuda-mps-server "${pkgdir}/usr/bin/nvidia-cuda-mps-server"
+    install -Dm755 nvidia-cuda-mps-control "${pkgdir}/usr/bin/nvidia-cuda-mps-control"
+    install -Dm644 nvidia-cuda-mps-control.1.gz "${pkgdir}/usr/share/man/man1/nvidia-cuda-mps-control.1.gz"
 
     # nvidia-modprobe
     # This should be removed if nvidia fixed their uvm module!
-    sudo install -Dm4755 nvidia-modprobe "${pkgdir}/usr/bin/nvidia-modprobe"
-    sudo install -Dm644 nvidia-modprobe.1.gz "${pkgdir}/usr/share/man/man1/nvidia-modprobe.1.gz"
+    install -Dm4755 nvidia-modprobe "${pkgdir}/usr/bin/nvidia-modprobe"
+    install -Dm644 nvidia-modprobe.1.gz "${pkgdir}/usr/share/man/man1/nvidia-modprobe.1.gz"
 
     # nvidia-persistenced
-    sudo install -Dm755 nvidia-persistenced "${pkgdir}/usr/bin/nvidia-persistenced"
-    sudo install -Dm644 nvidia-persistenced.1.gz "${pkgdir}/usr/share/man/man1/nvidia-persistenced.1.gz"
-    sudo install -Dm644 nvidia-persistenced-init/systemd/nvidia-persistenced.service.template "${pkgdir}/usr/lib/systemd/system/nvidia-persistenced.service"
-    sudo sed -i 's/__USER__/nvidia-persistenced/' "${pkgdir}/usr/lib/systemd/system/nvidia-persistenced.service"
+    install -Dm755 nvidia-persistenced "${pkgdir}/usr/bin/nvidia-persistenced"
+    install -Dm644 nvidia-persistenced.1.gz "${pkgdir}/usr/share/man/man1/nvidia-persistenced.1.gz"
+    install -Dm644 nvidia-persistenced-init/systemd/nvidia-persistenced.service.template "${pkgdir}/usr/lib/systemd/system/nvidia-persistenced.service"
+    sed -i 's/__USER__/nvidia-persistenced/' "${pkgdir}/usr/lib/systemd/system/nvidia-persistenced.service"
 
     # nvidia-ngx-updater
-    sudo install -Dm755 nvidia-ngx-updater "${pkgdir}/usr/bin/nvidia-ngx-updater"
+    install -Dm755 nvidia-ngx-updater "${pkgdir}/usr/bin/nvidia-ngx-updater"
 
     # nvidia-settings
-    sudo install -Dm755 nvidia-settings "${pkgdir}/usr/bin/nvidia-settings"
-    sudo install -Dm644 nvidia-settings.1.gz "${pkgdir}/usr/share/man/man1/nvidia-settings.1.gz"
-    sudo install -D -m644 nvidia-settings.desktop "${pkgdir}/usr/share/applications/nvidia-settings.desktop"
-    sudo install -D -m644 nvidia-settings.png "${pkgdir}/usr/share/pixmaps/nvidia-settings.png"
-    sudo sed \
+    install -Dm755 nvidia-settings "${pkgdir}/usr/bin/nvidia-settings"
+    install -Dm644 nvidia-settings.1.gz "${pkgdir}/usr/share/man/man1/nvidia-settings.1.gz"
+    install -D -m644 nvidia-settings.desktop "${pkgdir}/usr/share/applications/nvidia-settings.desktop"
+    install -D -m644 nvidia-settings.png "${pkgdir}/usr/share/pixmaps/nvidia-settings.png"
+    sed \
     -e 's:__UTILS_PATH__:/usr/bin:' \
     -e 's:__PIXMAP_PATH__:/usr/share/pixmaps:' \
     -e 's/__NVIDIA_SETTINGS_DESKTOP_CATEGORIES__/Settings;HardwareSettings;/' \
@@ -201,83 +202,83 @@ cd ${_pkg}
 # MISC STUFFS
 
     # application profiles
-    sudo install -Dm644 nvidia-application-profiles-${pkgver}-rc "${pkgdir}/usr/share/nvidia/nvidia-application-profiles-${pkgver}-rc"
-    sudo install -Dm644 nvidia-application-profiles-${pkgver}-key-documentation "${pkgdir}/usr/share/nvidia/nvidia-application-profiles-${pkgver}-key-documentation"
+    install -Dm644 nvidia-application-profiles-${pkgver}-rc "${pkgdir}/usr/share/nvidia/nvidia-application-profiles-${pkgver}-rc"
+    install -Dm644 nvidia-application-profiles-${pkgver}-key-documentation "${pkgdir}/usr/share/nvidia/nvidia-application-profiles-${pkgver}-key-documentation"
 
-    sudo install -Dm644 LICENSE "${pkgdir}/usr/share/licenses/nvidia-utils/LICENSE"
-    sudo install -Dm644 README.txt "${pkgdir}/usr/share/doc/nvidia/README"
-    sudo install -Dm644 NVIDIA_Changelog "${pkgdir}/usr/share/doc/nvidia/NVIDIA_Changelog"
-    sudo cp -r html "${pkgdir}/usr/share/doc/nvidia/"
-    sudo ln -s nvidia "${pkgdir}/usr/share/doc/nvidia-utils"
+    install -Dm644 LICENSE "${pkgdir}/usr/share/licenses/nvidia-utils/LICENSE"
+    install -Dm644 README.txt "${pkgdir}/usr/share/doc/nvidia/README"
+    install -Dm644 NVIDIA_Changelog "${pkgdir}/usr/share/doc/nvidia/NVIDIA_Changelog"
+    cp -r html "${pkgdir}/usr/share/doc/nvidia/"
+    ln -s nvidia "${pkgdir}/usr/share/doc/nvidia-utils"
 
     # new power management support
-    sudo install -Dm644 systemd/system/*.service -t "${pkgdir}/usr/lib/systemd/system"
-    sudo install -Dm755 systemd/system-sleep/nvidia "${pkgdir}/usr/lib/systemd/system-sleep/nvidia"
-    sudo install -Dm755 systemd/nvidia-sleep.sh "${pkgdir}/usr/bin/nvidia-sleep.sh"
-    sudo install -Dm755 nvidia-powerd "${pkgdir}/usr/bin/nvidia-powerd"
-    sudo install -Dm644 nvidia-dbus.conf "${pkgdir}"/usr/share/dbus-1/system.d/nvidia-dbus.conf
+    install -Dm644 systemd/system/*.service -t "${pkgdir}/usr/lib/systemd/system"
+    install -Dm755 systemd/system-sleep/nvidia "${pkgdir}/usr/lib/systemd/system-sleep/nvidia"
+    install -Dm755 systemd/nvidia-sleep.sh "${pkgdir}/usr/bin/nvidia-sleep.sh"
+    install -Dm755 nvidia-powerd "${pkgdir}/usr/bin/nvidia-powerd"
+    install -Dm644 nvidia-dbus.conf "${pkgdir}"/usr/share/dbus-1/system.d/nvidia-dbus.conf
 
     # distro specific files must be installed in /usr/share/X11/xorg.conf.d
-    sudo install -Dm644 "${srcdir}/nvidia-drm-outputclass.conf" "${pkgdir}/usr/share/X11/xorg.conf.d/10-nvidia-drm-outputclass.conf"
+    install -Dm644 "${srcdir}/nvidia-drm-outputclass.conf" "${pkgdir}/usr/share/X11/xorg.conf.d/10-nvidia-drm-outputclass.conf"
 
-    sudo install -Dm644 "${srcdir}/nvidia-utils.sysusers" "${pkgdir}/usr/lib/sysusers.d/$pkgname.conf"
+    install -Dm644 "${srcdir}/nvidia-utils.sysusers" "${pkgdir}/usr/lib/sysusers.d/$gives.conf"
 
-    sudo install -Dm644 "${srcdir}/nvidia.rules" "$pkgdir"/usr/lib/udev/rules.d/60-nvidia.rules
+    install -Dm644 "${srcdir}/nvidia.rules" "$pkgdir"/usr/lib/udev/rules.d/60-nvidia.rules
 
-    echo "blacklist nouveau" | sudo install -Dm644 /dev/stdin "${pkgdir}/usr/lib/modprobe.d/${pkgname}.conf"
-    echo "nvidia-uvm" | sudo install -Dm644 /dev/stdin "${pkgdir}/usr/lib/modules-load.d/${pkgname}.conf"
+    echo "blacklist nouveau" | install -Dm644 /dev/stdin "${pkgdir}/usr/lib/modprobe.d/${gives}.conf"
+    echo "nvidia-uvm" | install -Dm644 /dev/stdin "${pkgdir}/usr/lib/modules-load.d/${gives}.conf"
 
     # OpenCL
-    sudo install -Dm644 nvidia.icd "${pkgdir}/etc/OpenCL/vendors/nvidia.icd"
-    sudo mkdir -p "${pkgdir}/usr/share/licenses"
-    sudo ln -s nvidia-utils "${pkgdir}/usr/share/licenses/opencl-nvidia"
+    install -Dm644 nvidia.icd "${pkgdir}/etc/OpenCL/vendors/nvidia.icd"
+    mkdir -p "${pkgdir}/usr/share/licenses"
+    ln -s nvidia-utils "${pkgdir}/usr/share/licenses/opencl-nvidia"
 
     # glvnd
-    sudo install -Dm644 "10_nvidia.json" "${pkgdir}/usr/share/glvnd/egl_vendor.d/10_nvidia.json"
+    install -Dm644 "10_nvidia.json" "${pkgdir}/usr/share/glvnd/egl_vendor.d/10_nvidia.json"
 
     # Vulkan ICD
-    sudo install -Dm644 "nvidia_icd.json" "${pkgdir}/usr/share/vulkan/icd.d/nvidia_icd.json"
-    sudo install -Dm644 "nvidia_layers.json" "${pkgdir}/usr/share/vulkan/implicit_layer.d/nvidia_layers.json"
+    install -Dm644 "nvidia_icd.json" "${pkgdir}/usr/share/vulkan/icd.d/nvidia_icd.json"
+    install -Dm644 "nvidia_layers.json" "${pkgdir}/usr/share/vulkan/implicit_layer.d/nvidia_layers.json"
 
     # Wayland/GBM (.json)
-    sudo install -Dm644 15_nvidia_gbm.json "${pkgdir}/usr/share/egl/egl_external_platform.d/15_nvidia_gbm.json"
+    install -Dm644 15_nvidia_gbm.json "${pkgdir}/usr/share/egl/egl_external_platform.d/15_nvidia_gbm.json"
 
 # CREATE LIB64 SYMLINKS
     create_links
 
 # DKMS
-    sudo install -dm 755 "${pkgdir}"/usr/src
-    sudo cp -dr --no-preserve='ownership' kernel "${pkgdir}/usr/src/nvidia-${pkgver}"
+    install -dm 755 "${pkgdir}"/usr/src
+    cp -dr --no-preserve='ownership' kernel "${pkgdir}/usr/src/nvidia-${pkgver}"
 
-    sudo install -Dt "${pkgdir}/usr/share/licenses/${pkgname}" -m644 "${srcdir}/${_pkg}/LICENSE"
+    install -Dt "${pkgdir}/usr/share/licenses/${gives}" -m644 "${srcdir}/${_pkg}/LICENSE"
 
 # FIRMWARES
-    sudo install -Dm644 -t "${pkgdir}/usr/lib/firmware/nvidia/${pkgver}/" firmware/*.bin
-    sudo install -Dm755 "nvoptix.bin" "${pkgdir}/usr/share/nvidia/nvoptix.bin"
+    install -Dm644 -t "${pkgdir}/usr/lib/firmware/nvidia/${pkgver}/" firmware/*.bin
+    install -Dm755 "nvoptix.bin" "${pkgdir}/usr/share/nvidia/nvoptix.bin"
 
 # LIB32
 # INSTALL LIB32 FROM LIB32-NVIDIA-UTILS : /usr/lib/i386-linux-gnu/
     cd 32
 
-    sudo install -Dm755 *.so* -t "${pkgdir}/usr/lib/i386-linux-gnu"
+    install -Dm755 *.so* -t "${pkgdir}/usr/lib/i386-linux-gnu"
 
     #FIX DEPENDENCIES
-    sudo rm ${pkgdir}/usr/lib/i386-linux-gnu/libEGL.so.*
-    sudo rm ${pkgdir}/usr/lib/i386-linux-gnu/libGLdispatch.so.*
-    sudo rm ${pkgdir}/usr/lib/i386-linux-gnu/libGLESv1_CM.so.*
-    sudo rm ${pkgdir}/usr/lib/i386-linux-gnu/libGLESv2.so.*
-    sudo rm ${pkgdir}/usr/lib/i386-linux-gnu/libGL.so.*
-    sudo rm ${pkgdir}/usr/lib/i386-linux-gnu/libGLX.so.*
-    sudo rm ${pkgdir}/usr/lib/i386-linux-gnu/libOpenCL.so.*
-    sudo rm ${pkgdir}/usr/lib/i386-linux-gnu/libOpenGL.so.*
+    rm ${pkgdir}/usr/lib/i386-linux-gnu/libEGL.so.*
+    rm ${pkgdir}/usr/lib/i386-linux-gnu/libGLdispatch.so.*
+    rm ${pkgdir}/usr/lib/i386-linux-gnu/libGLESv1_CM.so.*
+    rm ${pkgdir}/usr/lib/i386-linux-gnu/libGLESv2.so.*
+    rm ${pkgdir}/usr/lib/i386-linux-gnu/libGL.so.*
+    rm ${pkgdir}/usr/lib/i386-linux-gnu/libGLX.so.*
+    rm ${pkgdir}/usr/lib/i386-linux-gnu/libOpenCL.so.*
+    rm ${pkgdir}/usr/lib/i386-linux-gnu/libOpenGL.so.*
 
     # VDPAU
-    sudo install -d "${pkgdir}/usr/lib/i386-linux-gnu/vdpau/"
-    sudo mv "${pkgdir}/usr/lib/i386-linux-gnu/libvdpau_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/i386-linux-gnu/vdpau/libvdpau_nvidia.so.${pkgver}"
+    install -d "${pkgdir}/usr/lib/i386-linux-gnu/vdpau/"
+    mv "${pkgdir}/usr/lib/i386-linux-gnu/libvdpau_nvidia.so.${pkgver}" "${pkgdir}/usr/lib/i386-linux-gnu/vdpau/libvdpau_nvidia.so.${pkgver}"
 
     # Licences
-    sudo mkdir -p "${pkgdir}/usr/share/licenses"
-    sudo ln -s $_pkgbasename "${pkgdir}/usr/share/licenses/${pkgname}"
+    mkdir -p "${pkgdir}/usr/share/licenses"
+    ln -s $_pkgbasename "${pkgdir}/usr/share/licenses/${gives}"
 
 # CREATE LIB32 SYMLINKS
     create_links_32
@@ -285,9 +286,9 @@ cd ${_pkg}
 # FIX : BECAUSE PACSTALL DOESN'T HAVE PRE_REMOVE() FUNCTION
 # CREATE PRERM DEBIAN SCRIPT
 
-sudo mkdir -p "${pkgdir}/DEBIAN/"
-sudo mv ${srcdir}/prerm-nvidia ${pkgdir}/DEBIAN/prerm
-sudo chmod +x ${pkgdir}/DEBIAN/prerm
+mkdir -p "${pkgdir}/DEBIAN/"
+mv ${srcdir}/prerm-nvidia ${pkgdir}/DEBIAN/prerm
+chmod +x ${pkgdir}/DEBIAN/prerm
 
 }
 

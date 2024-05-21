@@ -1,15 +1,14 @@
 # Maintainer: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
 # Maintainer: Levente Polyak <anthraxx[at]archlinux[dot]org>
 # Contributor: Anatol Pomozov <anatol dot pomozov at gmail>
-name="meson"
 pkgname="meson"
+gives="meson"
 pkgver="1.4.0"
 pkgrel="2"
 pkgdesc="High productivity build system"
-url="https://mesonbuild.com/"
+source=("https://mesonbuild.com/")
 arch=("any")
 license=("Apache")
-gives="meson"
 
 makedepends=(
   "python3-build"
@@ -21,22 +20,14 @@ makedepends=(
   "python3-typing-extensions"
 )
 
-url="https://github.com/mesonbuild/meson/releases/download/${pkgver}/meson-${pkgver}.tar.gz"
+source=("https://github.com/mesonbuild/meson/releases/download/${pkgver}/meson-${pkgver}.tar.gz")
 
 prepare() {
+  cd "${_archive}"
 
   dl_url="https://raw.githubusercontent.com/Xdavius/vortex-linux/dev/vortex-repository/pacscript/packages/meson/"
 
-  wget https://github.com/mesonbuild/meson/releases/download/${pkgver}/meson-reference.3
-  wget https://github.com/mesonbuild/meson/releases/download/${pkgver}/reference_manual.json
 
-  wget ${dl_url}arch-meson
-  wget ${dl_url}cross-lib32
-  wget ${dl_url}native-clang
-  wget ${dl_url}0001-Skip-broken-tests.patch
-  wget ${dl_url}0002-unittests-Add-a-helper-for-copying-source-trees.patch
-  wget ${dl_url}0003-tests-Fix-unit-tests-with-high-parallelism.patch
-  wget ${dl_url}0004-Revert-rust-recursively-pull-proc-macro-dependencies.patch
 
   # Pass tests
   patch -Np1 -i 0001-Skip-broken-tests.patch
@@ -50,6 +41,7 @@ prepare() {
 }
 
 build() {
+  cd "${_archive}"
   python3 -m build --wheel --no-isolation
 }
 
@@ -59,20 +51,34 @@ check() (
 )
 
 package() {
-  sudo python3 -m installer --destdir="${pkgdir}" dist/*.whl
+  cd "${_archive}"
+  python3 -m installer --destdir="${pkgdir}" dist/*.whl
 
-  sudo install -d "${pkgdir}/usr/share/vim/vimfiles"
-  sudo cp -rt "${pkgdir}/usr/share/vim/vimfiles" data/syntax-highlighting/vim/*/
+  install -d "${pkgdir}/usr/share/vim/vimfiles"
+  cp -rt "${pkgdir}/usr/share/vim/vimfiles" data/syntax-highlighting/vim/*/
 
-  sudo install -Dm644 data/shell-completions/bash/* -t "${pkgdir}/usr/share/bash-completion/completions"
-  sudo install -Dm644 data/shell-completions/zsh/*  -t "${pkgdir}/usr/share/zsh/site-functions"
+  install -Dm644 data/shell-completions/bash/* -t "${pkgdir}/usr/share/bash-completion/completions"
+  install -Dm644 data/shell-completions/zsh/*  -t "${pkgdir}/usr/share/zsh/site-functions"
 
-  sudo install -Dm644 meson-reference.3     "${pkgdir}/usr/share/man/man3/meson-reference.3"
-  sudo install -Dm644 reference_manual.json "${pkgdir}/usr/share/doc/$pkgname/reference_manual.json"
+  install -Dm644 ${srcdir}/meson-reference.3     "${pkgdir}/usr/share/man/man3/meson-reference.3"
+  install -Dm644 ${srcdir}/reference_manual.json "${pkgdir}/usr/share/doc/$gives/reference_manual.json"
 
-  sudo install -D arch-meson -t "${pkgdir}/usr/bin"
+  install -D arch-meson -t "${pkgdir}/usr/bin"
 
-  sudo install -Dm644 cross-lib32 "${pkgdir}/usr/share/meson/cross/lib32"
-  sudo install -Dm644 native-clang "${pkgdir}/usr/share/meson/native/clang"
+  install -Dm644 cross-lib32 "${pkgdir}/usr/share/meson/cross/lib32"
+  install -Dm644 native-clang "${pkgdir}/usr/share/meson/native/clang"
 }
 
+
+sha256sums=(
+  "SKIP"
+  "SKIP"
+  "SKIP"
+  "SKIP"
+  "SKIP"
+  "SKIP"
+  "SKIP"
+  "SKIP"
+  "SKIP"
+  "SKIP"
+)

@@ -1,9 +1,8 @@
-name="mesa"
-#gives="mesa"
 pkgname="mesa"
+#gives="mesa"
 pkgver="24.0.2"
 pkgrel=1
-url="https://mesa.freedesktop.org/archive/mesa-${pkgver}.tar.xz"
+source=("https://mesa.freedesktop.org/archive/mesa-${pkgver}.tar.xz")
 #url="https://launchpad.net/~kisak/+archive/ubuntu/kisak-mesa/+sourcefiles/mesa/24.0.3~kisak1~j/mesa_24.0.3~kisak1~j.tar.xz"
 
 makedepends=("cmake" "pkg-config" "glslang-tools" "libwayland-egl-backend-dev" "flex" "llvm-15" "libxcb-glx0-dev" "libxcb-dri2-0-dev" "libxcb-dri3-dev" "libxcb-present-dev" "libxshmfence-dev" "libxfixes-dev" "libomxil-bellagio-dev" "libva-dev" "libvdpau-dev" "wayland-protocols" "libx11-xcb-dev" "libxxf86vm-dev" "directx-headers-dev" "libllvmspirvlib-15-dev" "spirv-tools" "libclang-dev" "clang" "libglvnd-dev" "valgrind" "libunwind-dev" "libsensors-dev" "python3-ply" "bindgen")
@@ -13,27 +12,27 @@ pacdeps=("libdrm" "meson")
 
 #libegl-dev libgl-dev libglx-dev mesa-vulkan-driver libgl1 bindgen
 
-gives="mesa"
 
-#gives=('mesa' 'libegl-mesa0' 'libgl1-mesa-dri' 'libglapi-mesa' 'libglu1-mesa' 'libglx-mesa0' 'libosmesa8' 'mesa-vulkan-drivers' 'mesa-vdpau-drivers' 'mesa-va-drivers' 'libxatracker2' 'libgbm1')
 
 provides=('libegl-mesa0' 'libgl1-mesa-dri' 'libglapi-mesa' 'libglu1-mesa' 'libglx-mesa0' 'libosmesa8' 'mesa-vulkan-drivers' 'mesa-vdpau-drivers' 'mesa-va-drivers' 'libxatracker2')
 
-replace=('libegl-mesa0' 'libgl1-mesa-dri' 'libglapi-mesa' 'libglu1-mesa' 'libglx-mesa0' 'libosmesa8' 'mesa-vulkan-drivers' 'mesa-vdpau-drivers' 'mesa-va-drivers' 'libxatracker2')
+replaces=('libegl-mesa0' 'libgl1-mesa-dri' 'libglapi-mesa' 'libglu1-mesa' 'libglx-mesa0' 'libosmesa8' 'mesa-vulkan-drivers' 'mesa-vdpau-drivers' 'mesa-va-drivers' 'libxatracker2')
 
 
 pkgdesc="free implementation of the OpenGL API -- GLX vendor library"
 repology=("project: mesa")
 arch=('amd64')
-maintainer="Cavern"
+maintainer=("Cavern")
 
 prepare() {
+  cd "${_archive}"
 
 echo "no patches"
 
 }
 
 build() {
+  cd "${_archive}"
 
 local meson_options=(
     -D android-libbacktrace=disabled
@@ -90,6 +89,7 @@ _install() {
 _libdir=usr/lib/x86_64-linux-gnu
 
 package() {
+  cd "${_archive}"
 
   set -e
   _libdir=usr/lib/x86_64-linux-gnu
@@ -101,14 +101,14 @@ package() {
   _install fakeinstall/$_libdir/libVkLayer_*.so
   _install fakeinstall/usr/bin/mesa-overlay-control.py
 
-  #sudo install -m644 -Dt "${pkgdir}/usr/share/licenses/${pkgname}" LICENSE
+  #install -m644 -Dt "${pkgdir}/usr/share/licenses/${gives}" LICENSE
 
 # vulkan-intel
 
   _install fakeinstall/usr/share/vulkan/icd.d/intel_*.json
   _install fakeinstall/$_libdir/libvulkan_intel*.so
 
-  #sudo install -m644 -Dt "${pkgdir}/usr/share/licenses/${pkgname}" LICENSE
+  #install -m644 -Dt "${pkgdir}/usr/share/licenses/${gives}" LICENSE
 
 
 # vulkan-radeon
@@ -118,7 +118,7 @@ package() {
   _install fakeinstall/usr/share/vulkan/icd.d/radeon_icd*.json
   _install fakeinstall/$_libdir/libvulkan_radeon.so
 
-  #sudo install -m644 -Dt "${pkgdir}/usr/share/licenses/${pkgname}" LICENSE
+  #install -m644 -Dt "${pkgdir}/usr/share/licenses/${gives}" LICENSE
 
 
 # vulkan-swrast
@@ -126,26 +126,26 @@ package() {
   _install fakeinstall/usr/share/vulkan/icd.d/lvp_icd*.json
   _install fakeinstall/$_libdir/libvulkan_lvp.so
 
-  #sudo install -m644 -Dt "${pkgdir}/usr/share/licenses/${pkgname}" LICENSE
+  #install -m644 -Dt "${pkgdir}/usr/share/licenses/${gives}" LICENSE
 
 # vulkan-virtio
 
   _install fakeinstall/usr/share/vulkan/icd.d/virtio_icd*.json
   _install fakeinstall/$_libdir/libvulkan_virtio.so
 
-  #sudo install -m644 -Dt "${pkgdir}/usr/share/licenses/${pkgname}" LICENSE
+  #install -m644 -Dt "${pkgdir}/usr/share/licenses/${gives}" LICENSE
 
 # libva-mesa-drivers
 
   _install fakeinstall/$_libdir/dri/*_drv_video.so
 
-  #sudo install -m644 -Dt "${pkgdir}/usr/share/licenses/${pkgname}" LICENSE
+  #install -m644 -Dt "${pkgdir}/usr/share/licenses/${gives}" LICENSE
 
 # mesa-vdpau
 
   _install fakeinstall/$_libdir/vdpau
 
-  #sudo install -m644 -Dt "${pkgdir}/usr/share/licenses/${pkgname}" LICENSE
+  #install -m644 -Dt "${pkgdir}/usr/share/licenses/${gives}" LICENSE
 
 # mesa
 
@@ -170,11 +170,11 @@ package() {
   _install fakeinstall/$_libdir/libEGL_mesa.so*
 
   # indirect rendering
-  sudo ln -sr "$pkgdir"/$_libdir/libGLX_{mesa,indirect}.so.0
+  ln -sr "$pkgdir"/$_libdir/libGLX_{mesa,indirect}.so.0
 
   # make sure there are no files left to install
-  #find fakeinstall -depth -print0 | xargs -0 sudo rmdir
+  #find fakeinstall -depth -print0 | xargs -0 rmdir
 
-  #sudo install -m644 -Dt "${pkgdir}/usr/share/licenses/${pkgname}" LICENSE
+  #install -m644 -Dt "${pkgdir}/usr/share/licenses/${gives}" LICENSE
 
 }
