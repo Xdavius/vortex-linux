@@ -1,7 +1,7 @@
 pkgname="nvidia-driver-beta-dkms-bundle"
 pkgbase="nvidia-utils"
+pkgver="555.42.02"
 gives=('lib-nvidia-utils')
-pkgver="550.54.14"
 pkgrel="1"
 pkgdesc="Nvidia BETA Driver + lib32"
 arch=('amd64')
@@ -18,7 +18,6 @@ incompatible=('ubuntu:*')
 
 _pkg="NVIDIA-Linux-x86_64-${pkgver}"
 source=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${pkgver}/${_pkg}.run")
-#hash="$(curl -sL $url | sha256sum | cut -d " " -f 1)"
 
 maintainer=("xdavius <xdavius@github.com>")
 
@@ -108,7 +107,7 @@ package() {
 
 # ENTER FOLDER
 
-cd ${_pkg}
+cd cd ${_archive}/${_pkg}
 
 # INSTALL LIB64 FROM NVIDIA-UTILS : /usr/lib/x86_64-linux-gnu/
 
