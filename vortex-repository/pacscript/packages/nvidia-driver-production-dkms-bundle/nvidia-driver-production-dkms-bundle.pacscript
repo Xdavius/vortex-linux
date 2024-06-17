@@ -1,11 +1,11 @@
+maintainer="xdavius <xdavius@github.com>"
 pkgname="nvidia-driver-production-dkms-bundle"
 pkgbase="nvidia-utils"
-gives=('lib-nvidia-utils')
-pkgver="550.67"
-pkgrel="2"
-pkgdesc="Nvidia BETA Driver + lib32"
+gives="nvidia-driver"
+pkgver="550.90.07"
+pkgrel="1"
+pkgdesc="Nvidia Production Drivers + lib32"
 arch=('amd64')
-license=('custom')
 options=('!strip')
 
 makedepends=("patchelf" "wget")
@@ -14,26 +14,25 @@ breaks=("nvidia-driver" "nvidia-driver-any" "nvidia-driver-libs:i386" "nvidia-se
 replaces=("nvidia-driver-functionality-dkms-bundle" "nvidia-driver-beta-dkms-bundle")
 provides=("firmware-nvidia-gsp" "libcuda1" "libcudadebugger1" "libegl-nvidia0" "libgl1-nvidia-glvnd-glx" "libgles-nvidia1" "libgles-nvidia2" "libglx-nvidia0" "libnvcuvid1" "libnvidia-allocator1" \
           "libnvidia-api1" "libnvidia-cfg1" "libnvidia-eglcore" "libnvidia-encode1" "libnvidia-fbc1" "libnvidia-glcore" "libnvidia-glvkspirv" "libnvidia-ml1" "libnvidia-ngx1" "libnvidia-nvvm4" \
-          "libnvidia-opticalflow1" "libnvidia-pkcs11-openssl3" "libnvidia-ptxjitcompiler1" "libnvidia-rtcore" "libnvoptix1" "nvidia-alternative" "nvidia-cuda-mps" "nvidia-detect" "nvidia-driver" \
+          "libnvidia-opticalflow1" "libnvidia-pkcs11-openssl3" "libnvidia-ptxjitcompiler1" "libnvidia-rtcore" "libnvoptix1" "nvidia-alternative" "nvidia-cuda-mps" "nvidia-detect" \
           "nvidia-driver-bin" "nvidia-driver-full" "nvidia-driver-libs" "nvidia-egl-common" "nvidia-egl-icd" "nvidia-kernel-dkms" "nvidia-kernel-source" "nvidia-kernel-support" "nvidia-legacy-check" \
           "nvidia-libopencl1" "nvidia-opencl-common" "nvidia-opencl-icd" "nvidia-powerd" "nvidia-smi" "nvidia-suspend-common" "nvidia-vdpau-driver" "nvidia-vulkan-common" "nvidia-vulkan-icd" "xserver-xorg-video-nvidia" \
-          "nvidia-driver" "nvidia-driver-libs:i386" "nvidia-settings")
+          "nvidia-driver-libs:i386" "nvidia-settings")
 
-incompatible=('ubuntu:*')
+#incompatible=('ubuntu:*')
 
 _pkg="NVIDIA-Linux-x86_64-${pkgver}"
 source=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${pkgver}/${_pkg}.run")
-#hash=""
-
-maintainer=("xdavius <xdavius@github.com>")
+sha256sums=('SKIP')
+external_connection=true
 
 create_links() {
     # create soname links
     find "$pkgdir" -type f -name '*.so*' ! -path '*xorg/*' -print0 | while read -d $'\0' _lib; do
         _soname=$(dirname "${_lib}")/$(readelf -d "${_lib}" | grep -Po 'SONAME.*: \[\K[^]]*' || true)
         _base=$(echo ${_soname} | sed -r 's/(.*)\.so.*/\1.so/')
-        [[ -e "${_soname}" ]] || sudo ln -s $(basename "${_lib}") "${_soname}"
-        [[ -e "${_base}" ]] || sudo ln -s $(basename "${_soname}") "${_base}"
+        [[ -e "${_soname}" ]] || ln -s $(basename "${_lib}") "${_soname}"
+        [[ -e "${_base}" ]] || ln -s $(basename "${_soname}") "${_base}"
     done
 }
 
@@ -43,8 +42,8 @@ create_links_32() {
     for _lib in $(find "${pkgdir}" -name '*.so*' | grep -v 'xorg/'); do
         _soname=$(dirname "${_lib}")/$(readelf -d "${_lib}" | grep -Po 'SONAME.*: \[\K[^]]*' || true)
         _base=$(echo ${_soname} | sed -r 's/(.*).so.*/\1.so/')
-        [[ -e "${_soname}" ]] || sudo ln -s $(basename "${_lib}") "${_soname}"
-        [[ -e "${_base}" ]] || sudo ln -s $(basename "${_soname}") "${_base}"
+        [[ -e "${_soname}" ]] || ln -s $(basename "${_lib}") "${_soname}"
+        [[ -e "${_base}" ]] || ln -s $(basename "${_soname}") "${_base}"
     done
 }
 
@@ -60,27 +59,18 @@ prepare() {
 
     # ARCHLINUX PATCHES AND CONF FILES
 
-    patches_url="https://raw.githubusercontent.com/Xdavius/vortex-linux/dev/vortex-repository/pacscript/packages/nvidia-driver-production-dkms-bundle"
+    patches_url="https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-utils/-/raw/550.90.07-2"
 
-    wget ${patches_url}/110-nvidia-change-dkms-conf.patch
-    wget ${patches_url}/120-nvidia-linux-rt-gift.patch
-
+    wget ${patches_url}/nvidia-drivers-470.223.02-gpl-pfn_valid.patch
     wget ${patches_url}/nvidia.rules
     wget ${patches_url}/nvidia-drm-outputclass.conf
     wget ${patches_url}/nvidia-utils.sysusers
-
-    # POSTRM PATCH FOR PACSTALL
-
-    wget ${patches_url}/prerm-nvidia
 
 # PREPARE
 
     sh "${_pkg}.run" --extract-only
     cd "${_pkg}"
     tar -xf nvidia-persistenced-init.tar.bz2
-
-    patch -Np1 -i "${srcdir}/110-nvidia-change-dkms-conf.patch"
-    patch -Np1 -i "${srcdir}/120-nvidia-linux-rt-gift.patch"
 
     cd kernel
 
@@ -282,14 +272,6 @@ cd ${_pkg}
 
 # CREATE LIB32 SYMLINKS
     create_links_32
-
-# FIX : BECAUSE PACSTALL DOESN'T HAVE PRE_REMOVE() FUNCTION
-# CREATE PRERM DEBIAN SCRIPT
-
-mkdir -p "${pkgdir}/DEBIAN/"
-mv ${srcdir}/prerm-nvidia ${pkgdir}/DEBIAN/prerm
-chmod +x ${pkgdir}/DEBIAN/prerm
-
 }
 
 post_upgrade() {
@@ -320,7 +302,7 @@ post_install() {
 set -e
 
 DKMS_NAME=nvidia
-DKMS_VERSION=550.67
+DKMS_VERSION=550.90.07
 
 dkms add -m ${DKMS_NAME} -v ${DKMS_VERSION}
 dkms build -m ${DKMS_NAME} -v ${DKMS_VERSION} && dkms install -m ${DKMS_NAME} -v ${DKMS_VERSION} --force || true
@@ -334,4 +316,16 @@ post_remove() {
   #if [[ -f /etc/modprobe.d/nvidia-drm.conf ]] ; then
   #  rm /etc/modprobe.d/nvidia-drm.conf
   #fi
+}
+
+pre_remove() {
+  #!/bin/sh
+  set -e
+
+  SRC_DKMS_NAME="nvidia"
+  SRC_INSTALLED=$(ls /usr/src/ | grep $SRC_DKMS_NAME)
+  DKMS_NAME=$(echo $SRC_INSTALLED | cut -d "-" -f1)
+  DKMS_VERSION=$(echo $SRC_INSTALLED | cut -d "-" -f2)
+
+  dkms remove -m $DKMS_NAME -v $DKMS_VERSION --all || true
 }
