@@ -13,7 +13,7 @@ arch=('any')
 homepage='https://github.com/atar-axis/xpadneo'
 license=('GPL3')
 depends=('dkms' 'bluetooth' 'linux-headers-amd64')
-source=(("${url}/archive/${_pkgver}.tar.gz"))
+source=("${url}/archive/${_pkgver}.tar.gz")
 
 
 prepare() {

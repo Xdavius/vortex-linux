@@ -1,0 +1,16 @@
+pkgname = linux-firmware-upstream
+gives = linux-firmware-upstream
+pkgver = 20240220
+pkgrel = 1
+pkgdesc = Firmware files updates for Linux
+arch = any
+source = https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/snapshot/linux-firmware-upstream-20240220.tar.gz
+makedepends = git
+makedepends = rdfind
+makedepends = python3-jinja2
+makedepends = debhelper-compat
+breaks = amdgpu-dkms-firmware
+license = GPL2
+license = GPL3
+license = custom
+maintainer = xdavius <xdavius@github.com>

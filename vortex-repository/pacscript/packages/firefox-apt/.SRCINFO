@@ -1,0 +1,10 @@
+pkgname = firefox-apt
+gives = firefox-apt
+pkgver = 1.0
+pkgdesc = Mozilla Firefox APT repository
+arch = amd64
+source = https://github.com/Xdavius/VRAC/releases/download/empty/empty.tar.gz
+source = repo-signing-key.gpg::https://packages.mozilla.org/apt/repo-signing-key.gpg
+maintainer = Xdavius <xdavius@github.com>
+sha256sums = SKIP
+sha256sums = SKIP

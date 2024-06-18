@@ -1,0 +1,9 @@
+pkgname = amdgpu-install-deb
+gives = amdgpu-install
+pkgver = 6.0.60000
+pkgrel = 1
+pkgdesc = AMDGPU Official Installer from Radeon Repository
+arch = amd64
+source = https://repo.radeon.com/amdgpu-install/latest/ubuntu/jammy/amdgpu-install_6.0.60000-1_all.deb
+maintainer = xdavius <xdavius@github.com>
+sha256sums = e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
