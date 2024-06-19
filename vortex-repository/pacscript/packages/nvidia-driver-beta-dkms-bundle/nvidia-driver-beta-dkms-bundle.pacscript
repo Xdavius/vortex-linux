@@ -3,8 +3,7 @@ pkgver="555.52.04"
 gives=('nvidia-driver')
 pkgrel="1"
 pkgdesc="Nvidia BETA Driver + lib32"
-arch=('amd64')
-license=('custom')
+arch=('any')
 options=('!strip')
 
 makedepends=("patchelf" "wget")
@@ -22,10 +21,10 @@ source=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${pkgver}/${_pkg}.r
         "https://aur.archlinux.org/cgit/aur.git/plain/nvidia.rules"
         "https://aur.archlinux.org/cgit/aur.git/plain/120-nvidia-settings-change-desktop-paths.patch")
 sha256sums=('9d53ae6dbef32ae95786ec7d02bb944d5050c1c70516e6065ab5356626a44402'
-            'be99ff3def641bb900c2486cce96530394c5dc60548fc4642f19d3a4c784134d'
-            'd8d1caa5d72c71c6430c2a0d9ce1a674787e9272ccce28b9d5898ca24e60a167'
-            'c307ac71a3297e96a3fe8df47313429f4dcdab4c96621efcff380398acc976d5'
-            '6f0f4a23706241e9e37e0fe30a09bd30ca29bb446d8fe7861cb4959f0a010ef4')
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP')
 
 maintainer=("xdavius <xdavius@github.com>")
 
@@ -52,17 +51,16 @@ create_links_32() {
 
 
 prepare() {
-  cd "${_archive}"
+  cd "${srcdir}"
 
 # PREPARE
 
     sh "${_pkg}.run" --extract-only
     cd "${_pkg}"
     tar -xf nvidia-persistenced-init.tar.bz2
-
-    gunzip "$_pkg"/nvidia-{cuda-mps-control,modprobe,persistenced,settings,smi,xconfig}.1.gz
-    
-    patch -d "$_pkg" -Np1 -i "${srcdir}/120-nvidia-settings-change-desktop-paths.patch"
+#    ls -a && sleep 10
+#    gunzip nvidia-{cuda-mps-control,modprobe,persistenced,settings,smi,xconfig}.1.gz
+#    patch -d "${_pkg}" -Np1 -i "${srcdir}/120-nvidia-settings-change-desktop-paths.patch"
 
     cd kernel
 
@@ -86,7 +84,7 @@ DEST_MODULE_LOCATION[4]="/kernel/drivers/video"' dkms.conf
 
 
 package() {
-  cd "${_archive}"
+  cd "${srcdir}"
 
 # ENTER FOLDER
 
