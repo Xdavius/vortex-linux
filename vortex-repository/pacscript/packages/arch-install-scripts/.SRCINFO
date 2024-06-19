@@ -1,0 +1,15 @@
+pkgname = arch-install-scripts
+gives = arch-install-scripts
+pkgver = 28
+pkgrel = 1
+pkgdesc = Scripts to aid in installing Arch Linux
+arch = any
+source = https://github.com/archlinux/arch-install-scripts/archive/refs/tags/v28.tar.gz
+depends = awk
+depends = bash
+depends = coreutils
+depends = grep
+depends = util-linux
+makedepends = asciidoc
+makedepends = git
+license = GPL2

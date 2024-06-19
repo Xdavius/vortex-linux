@@ -1,0 +1,11 @@
+pkgname = openrgb-deb
+gives = openrgb
+pkgver = 0.9
+pkgrel = 1
+pkgdesc = Control all of your RGB devices from a single app,
+arch = amd64
+source = /release_0.9/openrgb_0.9_amd64_bookworm_b5f46e3.deb
+breaks = openrgb-git
+incompatible = ubuntu:*
+maintainer = xdavius <xdavius@github.com>
+sha256sums = e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855

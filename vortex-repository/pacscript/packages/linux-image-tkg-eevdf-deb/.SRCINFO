@@ -1,0 +1,9 @@
+pkgname = linux-image-tkg-eevdf-deb
+gives = linux-image-6.8.0-tkg-eevdf
+pkgver = 6.8.0
+pkgrel = 1
+pkgdesc = Linux image tkg eevdf latest release
+arch = amd64
+source = https://github.com/xdavius/linux-tkg/releases/download/6.8.0/linux-image-6.8.0-tkg-eevdf_6.8.0-1_amd64.deb
+pacdeps = linux-headers-tkg-eevdf-deb
+maintainer = xdavius <xdavius@github.com>

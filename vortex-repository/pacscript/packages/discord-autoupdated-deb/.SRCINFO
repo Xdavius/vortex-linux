@@ -1,0 +1,12 @@
+pkgname = discord-autoupdated-deb
+gives = discord-autoupdated-deb
+pkgver = 0.0.57
+pkgdesc = Download and install latest Discord version
+arch = amd64
+source = https://discordapp.com/api/download?platform=linux&format=deb
+breaks = discord-autoupdated-deb
+breaks = discord-autoupdated-deb-app
+breaks = discord-autoupdated-deb-debian-patched-deb
+maintainer = ObsidianPresidium <emil@aarestrup.nu>
+repology = project: discord-autoupdated-deb
+sha256sums = e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855

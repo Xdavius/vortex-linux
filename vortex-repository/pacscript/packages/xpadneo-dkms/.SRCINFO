@@ -1,0 +1,10 @@
+pkgname = xpadneo-dkms
+pkgver = 0.9.6
+pkgrel = 1
+pkgdesc = Advanced Linux Driver for Xbox One S/X Wireless Gamepad
+arch = any
+source = /archive/v0.9.6.tar.gz
+depends = dkms
+depends = bluetooth
+depends = linux-headers-amd64
+license = GPL3

@@ -1,13 +1,12 @@
 pkgname="modprobed-db"
-gives=modprobed-db
-pkgver=2.46
-pkgrel=1
+gives="modprobed-db"
+pkgver="2.46"
 pkgdesc='Keeps track of EVERY kernel module ever used - useful for make localmodconfig'
 arch=('any')
 license=('MIT')
 depends=('kmod')
 optdepends=('sudo: needed for recall function')
-replaces=('modprobed_db' '${pkgname}-git)
+replaces=('modprobed_db' '${pkgname}-git')
 breaks=('modprobed_db')
 url="https://wiki.archlinux.org/index.php/Modprobed-db"
 source=("https://github.com/graysky2/${gives}/archive/v${pkgver}.tar.gz")

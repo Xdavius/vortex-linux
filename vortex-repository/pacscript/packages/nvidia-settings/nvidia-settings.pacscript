@@ -1,6 +1,3 @@
-# Maintainer: Sven-Hendrik Haase <svenstaro@archlinux.org>
-# Maintainer: Felix Yan <felixonmars@archlinux.org>
-# Maintainer: Levente Polyak <anthraxx[at]archlinux[dot]org>
 pkgname="nvidia-settings"
 gives="nvidia-settings"
 pkgdesc='Tool for configuring the NVIDIA graphics driver'
@@ -23,9 +20,8 @@ options=('staticlibs')
 
 maintainer=("xdavius <xdavius@github.com>")
 
-sha256sums=("$(curl -sL ${url} |)
-    sha256sum |
-    cut -d " " -f 1)"
+sha256sums=("SKIP")
+external_connection="true"
 
 prepare() {
   cd "${_archive}"
