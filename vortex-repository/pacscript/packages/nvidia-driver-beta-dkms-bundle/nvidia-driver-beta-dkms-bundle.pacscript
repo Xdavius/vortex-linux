@@ -1,7 +1,6 @@
 pkgname="nvidia-driver-beta-dkms-bundle"
-pkgbase="nvidia-utils"
-pkgver="555.42.02"
-gives=('lib-nvidia-utils')
+pkgver="555.52.04"
+gives=('nvidia-driver')
 pkgrel="1"
 pkgdesc="Nvidia BETA Driver + lib32"
 arch=('amd64')
@@ -17,7 +16,16 @@ provides=("nvidia-driver" "nvidia-driver-libs:i386" "nvidia-kernel-dkms" "nvidia
 incompatible=('ubuntu:*')
 
 _pkg="NVIDIA-Linux-x86_64-${pkgver}"
-source=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${pkgver}/${_pkg}.run")
+source=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${pkgver}/${_pkg}.run"
+        "https://aur.archlinux.org/cgit/aur.git/plain/nvidia-drm-outputclass.conf"
+        "https://aur.archlinux.org/cgit/aur.git/plain/nvidia-utils.sysusers"
+        "https://aur.archlinux.org/cgit/aur.git/plain/nvidia.rules"
+        "https://aur.archlinux.org/cgit/aur.git/plain/120-nvidia-settings-change-desktop-paths.patch")
+sha256sums=('9d53ae6dbef32ae95786ec7d02bb944d5050c1c70516e6065ab5356626a44402'
+            'be99ff3def641bb900c2486cce96530394c5dc60548fc4642f19d3a4c784134d'
+            'd8d1caa5d72c71c6430c2a0d9ce1a674787e9272ccce28b9d5898ca24e60a167'
+            'c307ac71a3297e96a3fe8df47313429f4dcdab4c96621efcff380398acc976d5'
+            '6f0f4a23706241e9e37e0fe30a09bd30ca29bb446d8fe7861cb4959f0a010ef4')
 
 maintainer=("xdavius <xdavius@github.com>")
 
@@ -46,40 +54,15 @@ create_links_32() {
 prepare() {
   cd "${_archive}"
 
-# ADD I386 ARCHITECTURE
-    dpkg --add-architecture i386
-    apt update
-
-# PATCHES
-
-    # ARCHLINUX PATCHES AND CONF FILES
-
-    patches_url="https://raw.githubusercontent.com/Xdavius/vortex-linux/dev/vortex-repository/pacscript/packages/nvidia-driver-beta-dkms-bundle"
-
-    wget ${patches_url}/110-nvidia-change-dkms-conf.patch
-    wget ${patches_url}/120-nvidia-linux-rt-gift.patch
-    wget ${patches_url}/130-nvidia-linux-fix.patch
-
-    wget ${patches_url}/nvidia.rules
-    wget ${patches_url}/nvidia-drm-outputclass.conf
-    wget ${patches_url}/nvidia-utils.sysusers
-
-    # POSTRM PATCH FOR PACSTALL
-
-    wget ${patches_url}/prerm-nvidia
-
 # PREPARE
 
     sh "${_pkg}.run" --extract-only
     cd "${_pkg}"
     tar -xf nvidia-persistenced-init.tar.bz2
 
-    patch -Np1 -i "${srcdir}/110-nvidia-change-dkms-conf.patch"
-    patch -Np1 -i "${srcdir}/120-nvidia-linux-rt-gift.patch"
-
-    # fix incompat with Linux 6.6.15 and 6.7.3
-    # from Gentoo at https://github.com/gentoo/gentoo/commit/c64caf5352e8b82edbaa2204aaf055cbcabfc8d1
-    patch -Np1 -i "${srcdir}/130-nvidia-linux-fix.patch"
+    gunzip "$_pkg"/nvidia-{cuda-mps-control,modprobe,persistenced,settings,smi,xconfig}.1.gz
+    
+    patch -d "$_pkg" -Np1 -i "${srcdir}/120-nvidia-settings-change-desktop-paths.patch"
 
     cd kernel
 
@@ -107,7 +90,7 @@ package() {
 
 # ENTER FOLDER
 
-cd cd ${_archive}/${_pkg}
+cd ${_pkg}
 
 # INSTALL LIB64 FROM NVIDIA-UTILS : /usr/lib/x86_64-linux-gnu/
 
@@ -285,13 +268,6 @@ cd cd ${_archive}/${_pkg}
 # CREATE LIB32 SYMLINKS
     create_links_32
 
-# FIX : BECAUSE PACSTALL DOESN'T HAVE PRE_REMOVE() FUNCTION
-# CREATE PRERM DEBIAN SCRIPT
-
-mkdir -p "${pkgdir}/DEBIAN/"
-mv ${srcdir}/prerm-nvidia ${pkgdir}/DEBIAN/prerm
-chmod +x ${pkgdir}/DEBIAN/prerm
-
 }
 
 post_upgrade() {
@@ -306,11 +282,26 @@ post_install() {
 set -e
 
 DKMS_NAME=nvidia
-DKMS_VERSION=550.54.14
+DKMS_VERSION=555.52.04
 
 dkms add -m ${DKMS_NAME} -v ${DKMS_VERSION}
 dkms build -m ${DKMS_NAME} -v ${DKMS_VERSION} && dkms install -m ${DKMS_NAME} -v ${DKMS_VERSION} --force || true
 
 post_upgrade
 
+}
+
+pre_remove() {
+#!/bin/sh
+
+# THIS IS A TEMPLATE FOR DKMS PRERM SCRIPT FOR PACSTALL
+
+set -e
+
+SRC_DKMS_NAME="nvidia"
+SRC_INSTALLED=$(ls /usr/src/ | grep $SRC_DKMS_NAME)
+DKMS_NAME=$(echo $SRC_INSTALLED | cut -d "-" -f1)
+DKMS_VERSION=$(echo $SRC_INSTALLED | cut -d "-" -f2)
+
+dkms remove -m $DKMS_NAME -v $DKMS_VERSION --all || true
 }
