@@ -1,23 +1,76 @@
 pkgname="nvidia-driver-beta-dkms-bundle"
-pkgbase="nvidia-utils"
-pkgver="555.42.02"
-gives=('lib-nvidia-utils')
+pkgver="555.52.04"
+gives=('nvidia-driver')
 pkgrel="1"
 pkgdesc="Nvidia BETA Driver + lib32"
-arch=('amd64')
-license=('custom')
+arch=('any')
 options=('!strip')
 
 makedepends=("patchelf" "wget")
 depends=("dkms" "linux-headers-amd64" "libglvnd-dev" "libnvidia-egl-wayland-dev" "zlib1g-dev" "libc6:i386" "libglvnd-dev:i386")
 breaks=("nvidia-driver" "nvidia-driver-any" "nvidia-driver-libs:i386" "nvidia-settings")
 replaces=("nvidia-driver-functionality-dkms-bundle" "nvidia-driver-production-dkms-bundle")
-provides=("nvidia-driver" "nvidia-driver-libs:i386" "nvidia-kernel-dkms" "nvidia-settings")
+provides=("firmware-nvidia-gsp"
+            "libcuda1"
+            "libcudadebugger1"
+            "libegl-nvidia0"
+            "libgl1-nvidia-glvnd-glx"
+            "libgles-nvidia1"
+            "libgles-nvidia2"
+            "libglx-nvidia0"
+            "libnvcuvid1"
+            "libnvidia-allocator1"
+            "libnvidia-api1"
+            "libnvidia-cfg1"
+            "libnvidia-eglcore"
+            "libnvidia-encode1"
+            "libnvidia-fbc1"
+            "libnvidia-glcore"
+            "libnvidia-glvkspirv"
+            "libnvidia-ml1"
+            "libnvidia-ngx1"
+            "libnvidia-nvvm4"
+            "libnvidia-opticalflow1"
+            "libnvidia-pkcs11-openssl3"
+            "libnvidia-ptxjitcompiler1"
+            "libnvidia-rtcore"
+            "libnvoptix1"
+            "nvidia-alternative"
+            "nvidia-cuda-mps"
+            "nvidia-detect"
+            "nvidia-driver-bin"
+            "nvidia-driver-full"
+            "nvidia-driver-libs"
+            "nvidia-egl-common"
+            "nvidia-egl-icd"
+            "nvidia-kernel-dkms"
+            "nvidia-kernel-source"
+            "nvidia-kernel-support"
+            "nvidia-legacy-check"
+            "nvidia-libopencl1"
+            "nvidia-opencl-common"
+            "nvidia-opencl-icd"
+            "nvidia-powerd"
+            "nvidia-smi"
+            "nvidia-suspend-common"
+            "nvidia-vdpau-driver"
+            "nvidia-vulkan-common"
+            "nvidia-vulkan-icd"
+            "xserver-xorg-video-nvidia"
+            "nvidia-settings"
+            "nvidia-driver-libs:i386")
 
 incompatible=('ubuntu:*')
 
 _pkg="NVIDIA-Linux-x86_64-${pkgver}"
-source=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${pkgver}/${_pkg}.run")
+source=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${pkgver}/${_pkg}.run"
+        "nvidia.rules::https://aur.archlinux.org/cgit/aur.git/plain/nvidia.rules?h=nvidia-utils-beta"
+        "nvidia-drm-outputclass.conf::https://aur.archlinux.org/cgit/aur.git/plain/nvidia-drm-outputclass.conf?h=nvidia-utils-beta"
+        "nvidia-utils.sysusers::https://aur.archlinux.org/cgit/aur.git/plain/nvidia-utils.sysusers?h=nvidia-utils-beta")
+sha256sums=('9d53ae6dbef32ae95786ec7d02bb944d5050c1c70516e6065ab5356626a44402'
+            'SKIP'
+            'SKIP'
+            'SKIP')
 
 maintainer=("xdavius <xdavius@github.com>")
 
@@ -26,8 +79,8 @@ create_links() {
     find "$pkgdir" -type f -name '*.so*' ! -path '*xorg/*' -print0 | while read -d $'\0' _lib; do
         _soname=$(dirname "${_lib}")/$(readelf -d "${_lib}" | grep -Po 'SONAME.*: \[\K[^]]*' || true)
         _base=$(echo ${_soname} | sed -r 's/(.*)\.so.*/\1.so/')
-        [[ -e "${_soname}" ]] || sudo ln -s $(basename "${_lib}") "${_soname}"
-        [[ -e "${_base}" ]] || sudo ln -s $(basename "${_soname}") "${_base}"
+        [[ -e "${_soname}" ]] || ln -s $(basename "${_lib}") "${_soname}"
+        [[ -e "${_base}" ]] || ln -s $(basename "${_soname}") "${_base}"
     done
 }
 
@@ -37,49 +90,23 @@ create_links_32() {
     for _lib in $(find "${pkgdir}" -name '*.so*' | grep -v 'xorg/'); do
         _soname=$(dirname "${_lib}")/$(readelf -d "${_lib}" | grep -Po 'SONAME.*: \[\K[^]]*' || true)
         _base=$(echo ${_soname} | sed -r 's/(.*).so.*/\1.so/')
-        [[ -e "${_soname}" ]] || sudo ln -s $(basename "${_lib}") "${_soname}"
-        [[ -e "${_base}" ]] || sudo ln -s $(basename "${_soname}") "${_base}"
+        [[ -e "${_soname}" ]] || ln -s $(basename "${_lib}") "${_soname}"
+        [[ -e "${_base}" ]] || ln -s $(basename "${_soname}") "${_base}"
     done
 }
 
 
 prepare() {
-  cd "${_archive}"
-
-# ADD I386 ARCHITECTURE
-    dpkg --add-architecture i386
-    apt update
-
-# PATCHES
-
-    # ARCHLINUX PATCHES AND CONF FILES
-
-    patches_url="https://raw.githubusercontent.com/Xdavius/vortex-linux/dev/vortex-repository/pacscript/packages/nvidia-driver-beta-dkms-bundle"
-
-    wget ${patches_url}/110-nvidia-change-dkms-conf.patch
-    wget ${patches_url}/120-nvidia-linux-rt-gift.patch
-    wget ${patches_url}/130-nvidia-linux-fix.patch
-
-    wget ${patches_url}/nvidia.rules
-    wget ${patches_url}/nvidia-drm-outputclass.conf
-    wget ${patches_url}/nvidia-utils.sysusers
-
-    # POSTRM PATCH FOR PACSTALL
-
-    wget ${patches_url}/prerm-nvidia
+  cd "${srcdir}"
 
 # PREPARE
 
     sh "${_pkg}.run" --extract-only
     cd "${_pkg}"
     tar -xf nvidia-persistenced-init.tar.bz2
-
-    patch -Np1 -i "${srcdir}/110-nvidia-change-dkms-conf.patch"
-    patch -Np1 -i "${srcdir}/120-nvidia-linux-rt-gift.patch"
-
-    # fix incompat with Linux 6.6.15 and 6.7.3
-    # from Gentoo at https://github.com/gentoo/gentoo/commit/c64caf5352e8b82edbaa2204aaf055cbcabfc8d1
-    patch -Np1 -i "${srcdir}/130-nvidia-linux-fix.patch"
+#    ls -a && sleep 10
+#    gunzip nvidia-{cuda-mps-control,modprobe,persistenced,settings,smi,xconfig}.1.gz
+#    patch -d "${_pkg}" -Np1 -i "${srcdir}/120-nvidia-settings-change-desktop-paths.patch"
 
     cd kernel
 
@@ -103,11 +130,11 @@ DEST_MODULE_LOCATION[4]="/kernel/drivers/video"' dkms.conf
 
 
 package() {
-  cd "${_archive}"
+  cd "${srcdir}"
 
 # ENTER FOLDER
 
-cd cd ${_archive}/${_pkg}
+cd ${_pkg}
 
 # INSTALL LIB64 FROM NVIDIA-UTILS : /usr/lib/x86_64-linux-gnu/
 
@@ -258,6 +285,10 @@ cd cd ${_archive}/${_pkg}
     install -Dm644 -t "${pkgdir}/usr/lib/firmware/nvidia/${pkgver}/" firmware/*.bin
     install -Dm755 "nvoptix.bin" "${pkgdir}/usr/share/nvidia/nvoptix.bin"
 
+# EARLY LOADING (DRM_MODESET=1)
+
+    echo "options nvidia-drm modeset=1" | install -Dm644 /dev/stdin "${pkgdir}/etc/modprobe.d/nvidia-drm.conf"
+
 # LIB32
 # INSTALL LIB32 FROM LIB32-NVIDIA-UTILS : /usr/lib/i386-linux-gnu/
     cd 32
@@ -285,20 +316,29 @@ cd cd ${_archive}/${_pkg}
 # CREATE LIB32 SYMLINKS
     create_links_32
 
-# FIX : BECAUSE PACSTALL DOESN'T HAVE PRE_REMOVE() FUNCTION
-# CREATE PRERM DEBIAN SCRIPT
-
-mkdir -p "${pkgdir}/DEBIAN/"
-mv ${srcdir}/prerm-nvidia ${pkgdir}/DEBIAN/prerm
-chmod +x ${pkgdir}/DEBIAN/prerm
-
 }
 
 post_upgrade() {
+  echo "--------------------------------------------------------------------------------------------------------------"
+  echo "INSTALLATION NOTES :"
+  echo ""
   echo "If you run into trouble with CUDA not being available, run nvidia-modprobe first."
   echo "If you use GDM on Wayland, you might have to run systemctl enable --now nvidia-resume.service"
 
   # For the latter nore, see also https://gitlab.gnome.org/GNOME/gdm/-/issues/784
+  #echo "If you experiment troubles with Wayland/Hyprland, Consider add nvidia-drm modeset=1 to modprobe.d :"
+  #echo ""
+  #echo 'echo "options nvidia-drm modeset=1" | sudo install -Dm644 /dev/stdin "/etc/modprobe.d/nvidia-drm.conf"'
+  #echo ""
+  #echo "Remove it by exécuting : sudo rm /etc/lib/modprobe.d/nvidia-drm.conf"
+  #echo ""
+  echo "Some laptop before RTX can need these options : "
+  echo ""
+  echo "echo -e 'options nvidia NVreg_UsePageAttributeTable=1 NVreg_InitializeSystemMemoryAllocations=0 NVreg_DynamicPowerManagement=0x02' | sudo tee -a /etc/modprobe.d/nvidia-options.conf"
+  echo "--------------------------------------------------------------------------------------------------------------"
+
+  xdg-desktop-menu forceupdate
+  update-initramfs -u -k all
 }
 
 post_install() {
@@ -306,11 +346,26 @@ post_install() {
 set -e
 
 DKMS_NAME=nvidia
-DKMS_VERSION=550.54.14
+DKMS_VERSION=555.52.04
 
 dkms add -m ${DKMS_NAME} -v ${DKMS_VERSION}
 dkms build -m ${DKMS_NAME} -v ${DKMS_VERSION} && dkms install -m ${DKMS_NAME} -v ${DKMS_VERSION} --force || true
 
 post_upgrade
+}
 
+pre_remove() {
+#!/bin/sh
+set -e
+
+SRC_DKMS_NAME="nvidia"
+SRC_INSTALLED=$(ls /usr/src/ | grep $SRC_DKMS_NAME)
+DKMS_NAME=$(echo $SRC_INSTALLED | cut -d "-" -f1)
+DKMS_VERSION=$(echo $SRC_INSTALLED | cut -d "-" -f2)
+
+dkms remove -m $DKMS_NAME -v $DKMS_VERSION --all || true
+}
+
+post_remove() {
+  update-initramfs -u -k all
 }

@@ -1,4 +1,3 @@
-maintainer="xdavius <xdavius@github.com>"
 pkgname="nvidia-driver-production-dkms-bundle"
 pkgbase="nvidia-utils"
 gives="nvidia-driver"
@@ -12,19 +11,69 @@ makedepends=("patchelf" "wget")
 depends=("dkms" "linux-headers-amd64" "libglvnd-dev" "libnvidia-egl-wayland-dev" "zlib1g-dev" "libc6:i386" "libglvnd-dev:i386")
 breaks=("nvidia-driver" "nvidia-driver-any" "nvidia-driver-libs:i386" "nvidia-settings")
 replaces=("nvidia-driver-functionality-dkms-bundle" "nvidia-driver-beta-dkms-bundle")
-provides=("firmware-nvidia-gsp" "libcuda1" "libcudadebugger1" "libegl-nvidia0" "libgl1-nvidia-glvnd-glx" "libgles-nvidia1" "libgles-nvidia2" "libglx-nvidia0" "libnvcuvid1" "libnvidia-allocator1" \
-          "libnvidia-api1" "libnvidia-cfg1" "libnvidia-eglcore" "libnvidia-encode1" "libnvidia-fbc1" "libnvidia-glcore" "libnvidia-glvkspirv" "libnvidia-ml1" "libnvidia-ngx1" "libnvidia-nvvm4" \
-          "libnvidia-opticalflow1" "libnvidia-pkcs11-openssl3" "libnvidia-ptxjitcompiler1" "libnvidia-rtcore" "libnvoptix1" "nvidia-alternative" "nvidia-cuda-mps" "nvidia-detect" \
-          "nvidia-driver-bin" "nvidia-driver-full" "nvidia-driver-libs" "nvidia-egl-common" "nvidia-egl-icd" "nvidia-kernel-dkms" "nvidia-kernel-source" "nvidia-kernel-support" "nvidia-legacy-check" \
-          "nvidia-libopencl1" "nvidia-opencl-common" "nvidia-opencl-icd" "nvidia-powerd" "nvidia-smi" "nvidia-suspend-common" "nvidia-vdpau-driver" "nvidia-vulkan-common" "nvidia-vulkan-icd" "xserver-xorg-video-nvidia" \
-          "nvidia-driver-libs:i386" "nvidia-settings")
+provides=("firmware-nvidia-gsp"
+            "libcuda1"
+            "libcudadebugger1"
+            "libegl-nvidia0"
+            "libgl1-nvidia-glvnd-glx"
+            "libgles-nvidia1"
+            "libgles-nvidia2"
+            "libglx-nvidia0"
+            "libnvcuvid1"
+            "libnvidia-allocator1"
+            "libnvidia-api1"
+            "libnvidia-cfg1"
+            "libnvidia-eglcore"
+            "libnvidia-encode1"
+            "libnvidia-fbc1"
+            "libnvidia-glcore"
+            "libnvidia-glvkspirv"
+            "libnvidia-ml1"
+            "libnvidia-ngx1"
+            "libnvidia-nvvm4"
+            "libnvidia-opticalflow1"
+            "libnvidia-pkcs11-openssl3"
+            "libnvidia-ptxjitcompiler1"
+            "libnvidia-rtcore"
+            "libnvoptix1"
+            "nvidia-alternative"
+            "nvidia-cuda-mps"
+            "nvidia-detect"
+            "nvidia-driver-bin"
+            "nvidia-driver-full"
+            "nvidia-driver-libs"
+            "nvidia-egl-common"
+            "nvidia-egl-icd"
+            "nvidia-kernel-dkms"
+            "nvidia-kernel-source"
+            "nvidia-kernel-support"
+            "nvidia-legacy-check"
+            "nvidia-libopencl1"
+            "nvidia-opencl-common"
+            "nvidia-opencl-icd"
+            "nvidia-powerd"
+            "nvidia-smi"
+            "nvidia-suspend-common"
+            "nvidia-vdpau-driver"
+            "nvidia-vulkan-common"
+            "nvidia-vulkan-icd"
+            "xserver-xorg-video-nvidia"
+            "nvidia-settings"
+            "nvidia-driver-libs:i386")
 
-#incompatible=('ubuntu:*')
+incompatible=('ubuntu:*')
 
 _pkg="NVIDIA-Linux-x86_64-${pkgver}"
-source=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${pkgver}/${_pkg}.run")
-sha256sums=('SKIP')
-external_connection=true
+source=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${pkgver}/${_pkg}.run"
+        "https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-utils/-/raw/550.90.07-2/nvidia.rules"
+        "https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-utils/-/raw/550.90.07-2/nvidia-drm-outputclass.conf"
+        "https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-utils/-/raw/550.90.07-2/nvidia-utils.sysusers")
+sha256sums=('SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP')
+
+maintainer="xdavius <xdavius@github.com>"
 
 create_links() {
     # create soname links
@@ -50,21 +99,6 @@ create_links_32() {
 
 prepare() {
   cd "${_archive}"
-
-# ADD I386 ARCHITECTURE
-    dpkg --add-architecture i386
-    apt update
-
-# PATCHES
-
-    # ARCHLINUX PATCHES AND CONF FILES
-
-    patches_url="https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-utils/-/raw/550.90.07-2"
-
-    wget ${patches_url}/nvidia-drivers-470.223.02-gpl-pfn_valid.patch
-    wget ${patches_url}/nvidia.rules
-    wget ${patches_url}/nvidia-drm-outputclass.conf
-    wget ${patches_url}/nvidia-utils.sysusers
 
 # PREPARE
 
@@ -311,21 +345,18 @@ post_upgrade
 
 }
 
-post_remove() {
-  update-initramfs -u -k all
-  #if [[ -f /etc/modprobe.d/nvidia-drm.conf ]] ; then
-  #  rm /etc/modprobe.d/nvidia-drm.conf
-  #fi
+pre_remove() {
+#!/bin/sh
+set -e
+
+SRC_DKMS_NAME="nvidia"
+SRC_INSTALLED=$(ls /usr/src/ | grep $SRC_DKMS_NAME)
+DKMS_NAME=$(echo $SRC_INSTALLED | cut -d "-" -f1)
+DKMS_VERSION=$(echo $SRC_INSTALLED | cut -d "-" -f2)
+
+dkms remove -m $DKMS_NAME -v $DKMS_VERSION --all || true
 }
 
-pre_remove() {
-  #!/bin/sh
-  set -e
-
-  SRC_DKMS_NAME="nvidia"
-  SRC_INSTALLED=$(ls /usr/src/ | grep $SRC_DKMS_NAME)
-  DKMS_NAME=$(echo $SRC_INSTALLED | cut -d "-" -f1)
-  DKMS_VERSION=$(echo $SRC_INSTALLED | cut -d "-" -f2)
-
-  dkms remove -m $DKMS_NAME -v $DKMS_VERSION --all || true
+post_remove() {
+  update-initramfs -u -k all
 }
