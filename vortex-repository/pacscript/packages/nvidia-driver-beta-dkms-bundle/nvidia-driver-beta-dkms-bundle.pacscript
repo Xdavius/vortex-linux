@@ -10,7 +10,55 @@ makedepends=("patchelf" "wget")
 depends=("dkms" "linux-headers-amd64" "libglvnd-dev" "libnvidia-egl-wayland-dev" "zlib1g-dev" "libc6:i386" "libglvnd-dev:i386")
 breaks=("nvidia-driver" "nvidia-driver-any" "nvidia-driver-libs:i386" "nvidia-settings")
 replaces=("nvidia-driver-functionality-dkms-bundle" "nvidia-driver-production-dkms-bundle")
-provides=("nvidia-driver" "nvidia-driver-libs:i386" "nvidia-kernel-dkms" "nvidia-settings")
+provides=("firmware-nvidia-gsp"
+            "libcuda1"
+            "libcudadebugger1"
+            "libegl-nvidia0"
+            "libgl1-nvidia-glvnd-glx"
+            "libgles-nvidia1"
+            "libgles-nvidia2"
+            "libglx-nvidia0"
+            "libnvcuvid1"
+            "libnvidia-allocator1"
+            "libnvidia-api1"
+            "libnvidia-cfg1"
+            "libnvidia-eglcore"
+            "libnvidia-encode1"
+            "libnvidia-fbc1"
+            "libnvidia-glcore"
+            "libnvidia-glvkspirv"
+            "libnvidia-ml1"
+            "libnvidia-ngx1"
+            "libnvidia-nvvm4"
+            "libnvidia-opticalflow1"
+            "libnvidia-pkcs11-openssl3"
+            "libnvidia-ptxjitcompiler1"
+            "libnvidia-rtcore"
+            "libnvoptix1"
+            "nvidia-alternative"
+            "nvidia-cuda-mps"
+            "nvidia-detect"
+            "nvidia-driver-bin"
+            "nvidia-driver-full"
+            "nvidia-driver-libs"
+            "nvidia-egl-common"
+            "nvidia-egl-icd"
+            "nvidia-kernel-dkms"
+            "nvidia-kernel-source"
+            "nvidia-kernel-support"
+            "nvidia-legacy-check"
+            "nvidia-libopencl1"
+            "nvidia-opencl-common"
+            "nvidia-opencl-icd"
+            "nvidia-powerd"
+            "nvidia-smi"
+            "nvidia-suspend-common"
+            "nvidia-vdpau-driver"
+            "nvidia-vulkan-common"
+            "nvidia-vulkan-icd"
+            "xserver-xorg-video-nvidia"
+            "nvidia-settings"
+            "nvidia-driver-libs:i386")
 
 incompatible=('ubuntu:*')
 
@@ -239,6 +287,10 @@ cd ${_pkg}
     install -Dm644 -t "${pkgdir}/usr/lib/firmware/nvidia/${pkgver}/" firmware/*.bin
     install -Dm755 "nvoptix.bin" "${pkgdir}/usr/share/nvidia/nvoptix.bin"
 
+# EARLY LOADING (DRM_MODESET=1)
+
+    echo "options nvidia-drm modeset=1" | install -Dm644 /dev/stdin "${pkgdir}/etc/modprobe.d/nvidia-drm.conf"
+
 # LIB32
 # INSTALL LIB32 FROM LIB32-NVIDIA-UTILS : /usr/lib/i386-linux-gnu/
     cd 32
@@ -269,10 +321,26 @@ cd ${_pkg}
 }
 
 post_upgrade() {
+  echo "--------------------------------------------------------------------------------------------------------------"
+  echo "INSTALLATION NOTES :"
+  echo ""
   echo "If you run into trouble with CUDA not being available, run nvidia-modprobe first."
   echo "If you use GDM on Wayland, you might have to run systemctl enable --now nvidia-resume.service"
 
   # For the latter nore, see also https://gitlab.gnome.org/GNOME/gdm/-/issues/784
+  #echo "If you experiment troubles with Wayland/Hyprland, Consider add nvidia-drm modeset=1 to modprobe.d :"
+  #echo ""
+  #echo 'echo "options nvidia-drm modeset=1" | sudo install -Dm644 /dev/stdin "/etc/modprobe.d/nvidia-drm.conf"'
+  #echo ""
+  #echo "Remove it by exécuting : sudo rm /etc/lib/modprobe.d/nvidia-drm.conf"
+  #echo ""
+  echo "Some laptop before RTX can need these options : "
+  echo ""
+  echo "echo -e 'options nvidia NVreg_UsePageAttributeTable=1 NVreg_InitializeSystemMemoryAllocations=0 NVreg_DynamicPowerManagement=0x02' | sudo tee -a /etc/modprobe.d/nvidia-options.conf"
+  echo "--------------------------------------------------------------------------------------------------------------"
+
+  xdg-desktop-menu forceupdate
+  update-initramfs -u -k all
 }
 
 post_install() {
@@ -286,14 +354,10 @@ dkms add -m ${DKMS_NAME} -v ${DKMS_VERSION}
 dkms build -m ${DKMS_NAME} -v ${DKMS_VERSION} && dkms install -m ${DKMS_NAME} -v ${DKMS_VERSION} --force || true
 
 post_upgrade
-
 }
 
 pre_remove() {
 #!/bin/sh
-
-# THIS IS A TEMPLATE FOR DKMS PRERM SCRIPT FOR PACSTALL
-
 set -e
 
 SRC_DKMS_NAME="nvidia"
@@ -302,4 +366,8 @@ DKMS_NAME=$(echo $SRC_INSTALLED | cut -d "-" -f1)
 DKMS_VERSION=$(echo $SRC_INSTALLED | cut -d "-" -f2)
 
 dkms remove -m $DKMS_NAME -v $DKMS_VERSION --all || true
+}
+
+post_remove() {
+  update-initramfs -u -k all
 }
