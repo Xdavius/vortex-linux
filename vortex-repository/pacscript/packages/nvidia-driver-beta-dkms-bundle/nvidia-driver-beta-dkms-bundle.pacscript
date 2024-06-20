@@ -81,8 +81,8 @@ create_links() {
     find "$pkgdir" -type f -name '*.so*' ! -path '*xorg/*' -print0 | while read -d $'\0' _lib; do
         _soname=$(dirname "${_lib}")/$(readelf -d "${_lib}" | grep -Po 'SONAME.*: \[\K[^]]*' || true)
         _base=$(echo ${_soname} | sed -r 's/(.*)\.so.*/\1.so/')
-        [[ -e "${_soname}" ]] || sudo ln -s $(basename "${_lib}") "${_soname}"
-        [[ -e "${_base}" ]] || sudo ln -s $(basename "${_soname}") "${_base}"
+        [[ -e "${_soname}" ]] || ln -s $(basename "${_lib}") "${_soname}"
+        [[ -e "${_base}" ]] || ln -s $(basename "${_soname}") "${_base}"
     done
 }
 
@@ -92,8 +92,8 @@ create_links_32() {
     for _lib in $(find "${pkgdir}" -name '*.so*' | grep -v 'xorg/'); do
         _soname=$(dirname "${_lib}")/$(readelf -d "${_lib}" | grep -Po 'SONAME.*: \[\K[^]]*' || true)
         _base=$(echo ${_soname} | sed -r 's/(.*).so.*/\1.so/')
-        [[ -e "${_soname}" ]] || sudo ln -s $(basename "${_lib}") "${_soname}"
-        [[ -e "${_base}" ]] || sudo ln -s $(basename "${_soname}") "${_base}"
+        [[ -e "${_soname}" ]] || ln -s $(basename "${_lib}") "${_soname}"
+        [[ -e "${_base}" ]] || ln -s $(basename "${_soname}") "${_base}"
     done
 }
 
