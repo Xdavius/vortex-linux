@@ -64,9 +64,9 @@ incompatible=('ubuntu:*')
 
 _pkg="NVIDIA-Linux-x86_64-${pkgver}"
 source=("https://us.download.nvidia.com/XFree86/Linux-x86_64/${pkgver}/${_pkg}.run"
-        "https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-utils/-/raw/550.90.07-2/nvidia.rules"
-        "https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-utils/-/raw/550.90.07-2/nvidia-drm-outputclass.conf"
-        "https://gitlab.archlinux.org/archlinux/packaging/packages/nvidia-utils/-/raw/550.90.07-2/nvidia-utils.sysusers")
+        "nvidia.rules::https://aur.archlinux.org/cgit/aur.git/plain/nvidia.rules?h=nvidia-utils-beta"
+        "nvidia-drm-outputclass.conf::https://aur.archlinux.org/cgit/aur.git/plain/nvidia-drm-outputclass.conf?h=nvidia-utils-beta"
+        "nvidia-utils.sysusers::https://aur.archlinux.org/cgit/aur.git/plain/nvidia-utils.sysusers?h=nvidia-utils-beta")
 sha256sums=('9d53ae6dbef32ae95786ec7d02bb944d5050c1c70516e6065ab5356626a44402'
             'SKIP'
             'SKIP'
